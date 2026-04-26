@@ -1,0 +1,198 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_SAY
+}
+
+enum StudyMode {
+  ONLINE
+  OFFLINE
+  HYBRID
+}
+
+enum ApplicationStatus {
+  DRAFT
+  SUBMITTED
+  PAYMENT_PENDING
+  PAID
+  ENROLLMENT_PENDING
+  LEAD_SENT
+}
+
+enum PaymentStatus {
+  CREATED
+  AUTHORIZED
+  CAPTURED
+  FAILED
+}
+
+/** What the catalogue entry represents for search & discovery. */
+enum ExamListingKind {
+  COMPETITIVE_EXAM
+  NON_DEGREE_COURSE
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  phone     String   @unique
+  name      String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions      ActiveSession[]
+  applications  Application[]
+  paymentDetails PaymentDetail[]
+}
+
+model ActiveSession {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  userAgent String?
+  ip        String?
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model AcademicField {
+  id        String   @id @default(uuid()) @db.Uuid
+  slug      String   @unique
+  name      String
+  sortOrder Int      @default(0)
+  exams     Exam[]
+}
+
+model Exam {
+  id           String           @id @default(uuid()) @db.Uuid
+  fieldId      String           @db.Uuid
+  field        AcademicField    @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  slug         String
+  name         String
+  sortOrder    Int              @default(0)
+  listingKind  ExamListingKind  @default(COMPETITIVE_EXAM)
+  programs     Program[]
+
+  @@unique([fieldId, slug])
+  @@index([fieldId])
+  @@index([listingKind])
+}
+
+model Institute {
+  id          String    @id @default(uuid()) @db.Uuid
+  name        String
+  shortBio    String
+  city        String
+  /** Approximate campus coordinates for “nearest first” catalogue sorting. */
+  latitude    Float?
+  longitude   Float?
+  isPartner   Boolean   @default(false)
+  logoEmoji   String    @default("🏛️")
+  /** Demo catalogue filters & cards (synthetic aggregates). */
+  averageRating    Float   @default(4.2)
+  reviewCount      Int     @default(0)
+  accreditationTag String?
+  typeLabel        String?
+  establishedYear  Int?
+  createdAt   DateTime  @default(now())
+  programs    Program[]
+}
+
+model Program {
+  id          String    @id @default(uuid()) @db.Uuid
+  instituteId String    @db.Uuid
+  institute   Institute @relation(fields: [instituteId], references: [id], onDelete: Cascade)
+  examId      String    @db.Uuid
+  exam        Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  name        String
+  description String
+  studyMode   StudyMode @default(HYBRID)
+  createdAt   DateTime  @default(now())
+
+  applications  Application[]
+  paymentPlans  PaymentPlan[]
+
+  @@index([instituteId])
+  @@index([examId])
+}
+
+model Application {
+  id                  String              @id @default(uuid()) @db.Uuid
+  userId              String              @db.Uuid
+  user                User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  programId           String              @db.Uuid
+  program             Program             @relation(fields: [programId], references: [id], onDelete: Cascade)
+  status              ApplicationStatus   @default(DRAFT)
+  name                String
+  phoneSnapshot       String
+  email               String
+  address             String
+  dateOfBirth         DateTime            @db.Date
+  gender              Gender
+  parentNamePrimary   String
+  parentNameSecondary String?
+  lastPassedClass     String
+  board               String
+  percentage          Decimal             @db.Decimal(5, 2)
+  studyMode           StudyMode
+  documentUploadNote  String?             // "Upload later" — optional future S3 keys
+
+  paymentDetails PaymentDetail[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([programId])
+}
+
+model PaymentPlan {
+  id          String   @id @default(uuid()) @db.Uuid
+  programId   String   @db.Uuid
+  program     Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  name        String
+  amountPaise Int
+  currency    String   @default("INR")
+  active      Boolean  @default(true)
+
+  paymentDetails PaymentDetail[]
+
+  @@index([programId])
+}
+
+model PaymentDetail {
+  id                 String        @id @default(uuid()) @db.Uuid
+  userId             String        @db.Uuid
+  user               User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  applicationId      String?       @db.Uuid
+  application        Application?  @relation(fields: [applicationId], references: [id], onDelete: SetNull)
+  paymentPlanId      String?       @db.Uuid
+  paymentPlan        PaymentPlan?  @relation(fields: [paymentPlanId], references: [id], onDelete: SetNull)
+  razorpayOrderId    String?       @unique
+  razorpayPaymentId  String?       @unique
+  razorpaySignature  String?
+  amountPaise        Int
+  currency           String        @default("INR")
+  status             PaymentStatus @default(CREATED)
+  rawWebhook         Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([applicationId])
+}

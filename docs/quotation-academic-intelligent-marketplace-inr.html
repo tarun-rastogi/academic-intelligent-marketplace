@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Price Quotation — Academic Intelligent Marketplace (INR)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1d24;
+      --muted: #4a505c;
+      --line: #d8dce4;
+      --accent: #b01f24;
+      --accent-soft: #f5e8e9;
+      --paper: #ffffff;
+      --wash: #f6f7f9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-size: 15px;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Source Sans 3", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--wash);
+      line-height: 1.45;
+    }
+
+    .toolbar {
+      max-width: 210mm;
+      margin: 0 auto 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-print {
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .btn-print:hover {
+      filter: brightness(1.08);
+    }
+
+    .btn-print:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .print-hint {
+      flex: 1;
+      min-width: 200px;
+      margin: 0;
+      padding: 12px 16px;
+      background: #fff8e6;
+      border: 1px solid #e8d48a;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      color: #5c4a12;
+    }
+
+    .print-hint strong {
+      font-weight: 600;
+    }
+
+    .sheet {
+      max-width: 210mm;
+      min-height: 297mm;
+      margin: 20px auto 40px;
+      padding: 18mm 16mm 16mm;
+      background: var(--paper);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      border-radius: 2px;
+    }
+
+    header.doc-head {
+      border-bottom: 3px solid var(--accent);
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 24px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 12px;
+    }
+
+    .meta dt {
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .meta dd {
+      margin: 2px 0 0;
+    }
+
+    h2 {
+      margin: 22px 0 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    p {
+      margin: 0 0 10px;
+      text-align: justify;
+      text-wrap: pretty;
+      hyphens: auto;
+    }
+
+    ul {
+      margin: 8px 0 12px;
+      padding-left: 1.2rem;
+    }
+
+    li {
+      margin-bottom: 6px;
+      text-align: justify;
+      text-wrap: pretty;
+      hyphens: auto;
+    }
+
+    li::marker {
+      color: var(--accent);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.86rem;
+      margin: 10px 0 14px;
+    }
+
+    th,
+    td {
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      vertical-align: top;
+    }
+
+    td {
+      text-align: justify;
+      text-wrap: pretty;
+      hyphens: auto;
+    }
+
+    th {
+      background: var(--accent-soft);
+      font-weight: 600;
+      color: var(--ink);
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) {
+      background: #fafbfc;
+    }
+
+    .amount {
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      text-align: end;
+    }
+
+    .totals {
+      background: #f0f2f6;
+      font-weight: 600;
+    }
+
+    .note {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .wrap-screen {
+      padding: 16px;
+    }
+
+    @page {
+      size: A4;
+      margin: 14mm;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .no-print {
+        display: none !important;
+      }
+
+      .wrap-screen {
+        padding: 0;
+      }
+
+      .sheet {
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+        max-width: none;
+        min-height: auto;
+      }
+
+      header.doc-head {
+        break-after: avoid;
+      }
+
+      h2 {
+        break-after: avoid;
+      }
+
+      table {
+        break-inside: avoid;
+      }
+
+      tr {
+        break-inside: avoid;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap-screen">
+    <div class="toolbar no-print">
+      <button type="button" class="btn-print" onclick="window.print()">Print / Save as PDF</button>
+      <p class="print-hint" role="status">
+        <strong>Download as PDF:</strong> Click the button or use <strong>Print</strong>, then choose <strong>Save as PDF</strong> (macOS: <kbd>⌘</kbd>+<kbd>P</kbd>; Windows: <kbd>Ctrl</kbd>+<kbd>P</kbd>). Use paper size <strong>A4</strong>.
+      </p>
+    </div>
+
+    <article class="sheet" id="quotation">
+      <header class="doc-head">
+        <div class="brand">Commercial quotation</div>
+        <h1>Academic Intelligent Marketplace — implementation services</h1>
+        <dl class="meta">
+          <div>
+            <dt>Quotation reference</dt>
+            <dd>AIM-2026-04-16</dd>
+          </div>
+          <div>
+            <dt>Date</dt>
+            <dd>16 April 2026</dd>
+          </div>
+          <div>
+            <dt>Valid for</dt>
+            <dd>30 days from date above</dd>
+          </div>
+          <div>
+            <dt>Currency &amp; FX basis</dt>
+            <dd>Indian Rupees (INR)</dd>
+          </div>
+          <div>
+            <dt>Prepared for</dt>
+            <dd>Munjal Universal Consultancy LLP</dd>
+          </div>
+          <div>
+            <dt>Prepared by</dt>
+            <dd>Tarun Rastogi</dd>
+          </div>
+        </dl>
+      </header>
+
+      <section>
+        <h2>1. Executive summary</h2>
+        <p>
+          This quotation covers <strong>requirement gathering</strong>, <strong>design</strong>, <strong>engineering</strong>, <strong>quality assurance</strong>, <strong>deployment support</strong>, and <strong>project management</strong> for the <strong>Academic Intelligent Marketplace</strong>—a <strong>student-centred web platform</strong> for <strong>guided discovery</strong>, <strong>institute &amp; services selection</strong>, <strong>structured application</strong>, <strong>payment</strong>, and <strong>post-payment confirmation</strong>.
+        </p>
+        <p>
+          Commercial delivery is organised in <strong>three phases</strong>. <strong>Phase 1</strong> is <strong>MVP development of the web application</strong> (the programme and fees in the tables that follow). <strong>Phase 2</strong> is <strong>native mobile application development</strong> (iOS and Android), priced and scheduled separately when you choose to proceed. <strong>Phase 3</strong> is an <strong>annual retain-and-maintain (AMC)</strong> contract for ongoing production support after go-live.
+        </p>
+        <p>
+          When <strong>development (Phase 1) is complete</strong>, you receive <strong>three months of complimentary maintenance</strong> on the delivered scope. After that period, you may <strong>opt into Phase 3</strong> under a separate AMC, or continue with change-controlled enhancements as agreed.
+        </p>
+        <p>
+          <strong>Tarun Rastogi</strong> leads this engagement for the client. He brings <strong>strong delivery ownership</strong>, <strong>strategic and leadership judgement</strong>, <strong>project management discipline</strong>, and <strong>hands-on development experience</strong>, with <strong>15 years in industry</strong> across <strong>multinational companies</strong>, building <strong>high-quality applications</strong> deployed for <strong>demanding, global-class clients</strong>.
+        </p>
+      </section>
+
+      <section>
+        <h2>2. Modular scope and fees</h2>
+        <p>
+          <strong>Indicative programme phases (sequential calendar).</strong> The table below frames delivery in terms leadership can govern: clear outcomes per gate, time-boxed execution, and explicit commercial checkpoints.
+        </p>
+        <p>
+          <strong>Phase 1 — web application development.</strong> Total duration when run one after another is <strong>12 weeks</strong> (4 + 2 + 2 + 2 + 2). Professional fees are in INR and exclude GST unless otherwise stated.
+        </p>
+        <table aria-label="Project phases, deliverables, duration, and fees">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Phase</th>
+              <th scope="col">Deliverables</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Fee (INR)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>Discovery</strong></td>
+              <td>Facilitated leadership workshops; stakeholder and dependency map; problem definition and success measures; written scope baseline, decision log, and risk / compliance surface for board-level visibility.</td>
+              <td>4 weeks</td>
+              <td class="amount">₹2,00,000</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td><strong>Design</strong></td>
+              <td>Target solution architecture; critical user and service flows; integration boundaries; security and data-handling model; build-ready specifications with traceability into build and test.</td>
+              <td>2 weeks</td>
+              <td class="amount">₹1,00,000</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td><strong>Web development</strong></td>
+              <td>Web application implemented to the agreed SoW slice; integrations and configuration per contract; internal QA build; release candidate meeting agreed test-entry criteria—governed as a fixed window for capital efficiency.</td>
+              <td>2 weeks</td>
+              <td class="amount">₹1,00,000</td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td><strong>Testing</strong></td>
+              <td>Test strategy and execution; defect burn-down to agreed threshold; regression on revenue- and compliance-critical paths; UAT support; formal readiness pack and sponsor sign-off gate.</td>
+              <td>2 weeks</td>
+              <td class="amount">₹1,00,000</td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td><strong>Release &amp; deployment</strong></td>
+              <td>Production deployment runbook; smoke and rollback validation; controlled go-live; joint launch communications; hypercare window and knowledge transfer so operations owns the live service.</td>
+              <td>2 weeks</td>
+              <td class="amount">₹1,00,000</td>
+            </tr>
+            <tr class="totals">
+              <td colspan="3">Total (sequential programme)</td>
+              <td>12 weeks</td>
+              <td class="amount">₹6 lakh + GST</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <strong>Phase 2 — native mobile.</strong> Priced and scheduled separately from the web programme above; assumes a shared API and a mobility specification signed before build. Fees exclude GST unless otherwise stated.
+        </p>
+        <table aria-label="Phase 2 mobile application development">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Phase</th>
+              <th scope="col">Deliverables</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Fee (INR)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>6</td>
+              <td><strong>iOS application development</strong></td>
+              <td>iOS application engineering to the agreed parity slice; consumption of shared APIs; secure session, navigation, and offline-tolerant patterns where scoped; TestFlight-ready builds; App Store submission pack (metadata, signing, privacy artefacts) per your policies; internal QA and defect triage to the agreed exit gate.</td>
+              <td>2 weeks</td>
+              <td class="amount">₹1,00,000</td>
+            </tr>
+            <tr>
+              <td>7</td>
+              <td><strong>Android application development</strong></td>
+              <td>Android application engineering to the same functional baseline; Play Console–ready tracks; integration, performance, and device-matrix coverage per SoW; internal QA and stabilisation to the agreed handoff criteria ahead of store or enterprise distribution.</td>
+              <td>2 weeks</td>
+              <td class="amount">₹1,00,000</td>
+            </tr>
+            <tr class="totals">
+              <td colspan="3">Total (Phase 2 — sequential)</td>
+              <td>4 weeks</td>
+              <td class="amount">₹2 lakh + GST</td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <strong>Phase 3 — retain &amp; maintain (AMC).</strong> Annual contract after go-live: keeps the product supported, patched, and healthy under agreed service levels. Priced separately from Phases 1–2; fee excludes GST unless otherwise stated.
+        </p>
+        <table aria-label="Phase 3 annual maintenance contract">
+          <thead>
+            <tr>
+              <th scope="col">Category</th>
+              <th scope="col">Phase</th>
+              <th scope="col">Deliverables</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Fee (INR)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>8</td>
+              <td><strong>AMC — retain &amp; maintain</strong></td>
+              <td>Production support within agreed hours; defect triage and fixes for covered releases; security and dependency patches aligned to your change window; minor configuration or copy updates within scope caps; monthly health check and incident summary for leadership visibility.</td>
+              <td>1 year</td>
+              <td class="amount">₹1,20,000</td>
+            </tr>
+            <tr class="totals">
+              <td colspan="3">Total (Phase 3 — AMC)</td>
+              <td>1 year</td>
+              <td class="amount">₹1 lakh 20 thousand + GST</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>3. Inclusions</h2>
+        <ul>
+          <li>Discovery workshops for the signed scope (within agreed limits) and a written scope baseline.</li>
+          <li>User experience and interface design for surfaces agreed in the statement of work.</li>
+          <li>Engineering, automated and manual testing, and deployment support for agreed environments.</li>
+          <li>Project management embedded in the agreed professional fees.</li>
+          <li>Application hosting for agreed development, staging, and production environments during the delivery programme, as defined in the statement of work.</li>
+          <li>Third-party API integration charges used in explore, discovery, application, post-payment, user dashboard, and vendor dashboard.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>4. Exclusions</h2>
+        <ul>
+          <li>Client-owned content, catalog accuracy, institute contracts, and legal or policy copy.</li>
+          <li>Third-party spend outside what Inclusions expressly cover — for example: payment gateway charges; Android hosting charges; Google Play Store hosting or distribution charges; Apple App Store hosting or distribution charges; and other tools or API integrations not within the application hosting and third-party API integration inclusion items above, or not within the phases defined elsewhere in this quotation.</li>
+          <li>Formal penetration testing by a named firm, formal legal opinions, and formal WCAG certification unless separately scoped.</li>
+          <li>Ongoing production support after the agreed warranty window (available under a separate retainer).</li>
+        </ul>
+      </section>
+    </article>
+  </div>
+</body>
+</html>

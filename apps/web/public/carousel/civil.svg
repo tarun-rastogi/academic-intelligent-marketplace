@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="480" viewBox="0 0 288 480" role="img" aria-label="Civil services and government exams">
+  <defs>
+    <linearGradient id="civilGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c2410c"/>
+      <stop offset="100%" stop-color="#431407"/>
+    </linearGradient>
+  </defs>
+  <rect width="288" height="480" fill="url(#civilGrad)" rx="12"/>
+  <text x="144" y="210" text-anchor="middle" fill="#ffffff" font-family="system-ui,sans-serif" font-size="24" font-weight="700">Civil Services</text>
+  <text x="144" y="248" text-anchor="middle" fill="rgba(255,255,255,0.88)" font-family="system-ui,sans-serif" font-size="13">UPSC CSE &#183; State PSC &#183; SSC</text>
+</svg>

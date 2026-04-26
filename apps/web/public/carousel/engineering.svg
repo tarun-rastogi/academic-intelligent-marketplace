@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="480" viewBox="0 0 288 480" role="img" aria-label="Engineering entrance exams">
+  <defs>
+    <linearGradient id="engGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#172554"/>
+    </linearGradient>
+  </defs>
+  <rect width="288" height="480" fill="url(#engGrad)" rx="12"/>
+  <text x="144" y="220" text-anchor="middle" fill="#ffffff" font-family="system-ui,sans-serif" font-size="26" font-weight="700">Engineering</text>
+  <text x="144" y="258" text-anchor="middle" fill="rgba(255,255,255,0.88)" font-family="system-ui,sans-serif" font-size="14">JEE Main &#183; JEE Advanced &#183; BITSAT</text>
+</svg>

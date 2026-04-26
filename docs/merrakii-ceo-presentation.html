@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merrakii — Digital Academic Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700&family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet" />
+  <style>
+    /* Merrakii.co.in–aligned tokens (from theme CSS: #B01F24, #E39632, #000016, #30343F, #FFAF02) */
+    :root {
+      --mk-red: #b01f24;
+      --mk-red-hover: #c22c31;
+      --mk-gold: #e39632;
+      --mk-gold-bright: #ffaf02;
+      --mk-navy: #000016;
+      --mk-blue: #35519e;
+      --mk-text: #30343f;
+      --mk-text-muted: #5c6370;
+      --mk-border: #e2e4e8;
+      --mk-card: #ffffff;
+      --mk-cream: #f8f7f4;
+      --radius-frame: 20px;
+      --font-display: "Poppins", system-ui, sans-serif;
+      --font-body: "Work Sans", "Poppins", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: var(--font-body);
+      color: var(--mk-text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: var(--mk-navy);
+      position: relative;
+    }
+
+    /* Ambient mesh — modern depth, on-brand */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 120% 80% at 10% -20%, rgba(176, 31, 36, 0.45), transparent 50%),
+        radial-gradient(ellipse 90% 70% at 95% 10%, rgba(227, 150, 50, 0.22), transparent 45%),
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(53, 81, 158, 0.2), transparent 50%),
+        linear-gradient(165deg, #0a0b12 0%, #12151f 40%, #0d0e14 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .deck-shell {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 20px 20px;
+      gap: 12px;
+      outline: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .deck-shell:focus,
+    .deck-shell:focus-visible {
+      outline: none;
+      box-shadow: none;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      padding: 10px 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .toolbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .toolbar-brand img {
+      height: 36px;
+      width: auto;
+      object-fit: contain;
+      filter: brightness(1.08);
+    }
+
+    .toolbar-copy {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toolbar-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.02em;
+    }
+
+    .toolbar-tagline {
+      font-size: 12px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .toolbar-tagline span {
+      color: var(--mk-gold-bright);
+      font-weight: 500;
+    }
+
+    .toolbar-meta {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.85);
+      padding: 8px 14px;
+      background: rgba(176, 31, 36, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+    }
+
+    .slide-stage {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .slide-frame {
+      width: 100%;
+      max-width: 1180px;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--radius-frame);
+      background: var(--mk-card);
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 24px 80px rgba(0, 0, 0, 0.45),
+        0 0 120px rgba(176, 31, 36, 0.12);
+    }
+
+    /* Site-style top accent bar */
+    .slide-frame::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--mk-red) 0%, var(--mk-red-hover) 45%, var(--mk-gold) 100%);
+      z-index: 20;
+      pointer-events: none;
+    }
+
+    .slides {
+      position: absolute;
+      inset: 6px 0 0 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 44px 56px 48px 52px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.45s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: linear-gradient(145deg, #ffffff 0%, var(--mk-cream) 100%);
+      border-left: 5px solid var(--mk-red);
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      z-index: 1;
+    }
+
+    /* Decorative corner */
+    .slide::after {
+      content: "";
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at top right, rgba(176, 31, 36, 0.06), transparent 70%);
+      pointer-events: none;
+    }
+
+    .slide h1 {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 3.4vw, 40px);
+      font-weight: 600;
+      margin: 0 0 10px;
+      line-height: 1.15;
+      color: var(--mk-navy);
+      letter-spacing: -0.02em;
+    }
+
+    .slide h2 {
+      font-family: var(--font-display);
+      font-size: clamp(20px, 2.4vw, 30px);
+      font-weight: 600;
+      margin: 0 0 22px;
+      padding-bottom: 10px;
+      align-self: flex-start;
+      color: var(--mk-navy);
+      border-bottom: 3px solid var(--mk-red);
+      letter-spacing: -0.02em;
+    }
+
+    .slide .subtitle {
+      font-size: clamp(15px, 1.45vw, 18px);
+      color: var(--mk-text-muted);
+      font-weight: 400;
+      margin-top: 6px;
+      max-width: 42rem;
+      line-height: 1.5;
+    }
+
+    .slide .subtitle strong {
+      color: var(--mk-red);
+      font-weight: 600;
+    }
+
+    .slide ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      font-size: clamp(14px, 1.2vw, 17px);
+      line-height: 1.5;
+      color: var(--mk-text);
+    }
+
+    .slide li {
+      margin-bottom: 0.65em;
+      padding-left: 1.35em;
+      position: relative;
+    }
+
+    .slide li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.55em;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--mk-red), var(--mk-gold));
+      box-shadow: 0 0 0 2px rgba(176, 31, 36, 0.15);
+    }
+
+    .slide li strong {
+      font-weight: 600;
+      color: var(--mk-navy);
+    }
+
+    .slide .note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--mk-text-muted);
+      font-style: italic;
+      padding: 12px 16px;
+      background: rgba(176, 31, 36, 0.06);
+      border-radius: 10px;
+      border-left: 3px solid var(--mk-gold);
+    }
+
+    /* Hero / title slides — dark band like merrakii header strip */
+    .slide.title-slide {
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(155deg, #0f1018 0%, #1a1d2e 50%, #12141f 100%);
+      border-left: none;
+      padding-left: 56px;
+    }
+
+    .slide.title-slide::after {
+      background: radial-gradient(circle at 80% 20%, rgba(227, 150, 50, 0.15), transparent 55%),
+        radial-gradient(circle at 20% 80%, rgba(176, 31, 36, 0.2), transparent 50%);
+    }
+
+    .slide.title-slide h1 {
+      color: #fff;
+      font-weight: 600;
+      font-size: clamp(30px, 4.2vw, 48px);
+    }
+
+    .slide.title-slide h1 .gradient-word {
+      background: linear-gradient(90deg, #fff 0%, var(--mk-gold-bright) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .slide.title-slide .subtitle {
+      color: rgba(255, 255, 255, 0.72);
+      max-width: 36rem;
+    }
+
+    .slide.title-slide .subtitle strong {
+      color: var(--mk-gold-bright);
+    }
+
+    .slide.title-slide .note {
+      background: rgba(255, 255, 255, 0.06);
+      border-left-color: var(--mk-red);
+      color: rgba(255, 255, 255, 0.65);
+      font-style: normal;
+    }
+
+    .title-slide .hero-logo {
+      height: clamp(48px, 8vw, 72px);
+      width: auto;
+      margin-bottom: 28px;
+      object-fit: contain;
+      filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.35));
+    }
+
+    .title-slide h1 {
+      margin-bottom: 14px;
+    }
+
+    .footer-bar {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.65);
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+    }
+
+    .footer-bar kbd {
+      font-family: var(--font-display);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .slide-frame {
+        aspect-ratio: 4 / 3;
+      }
+      .slide {
+        padding: 32px 22px 40px 20px;
+      }
+      .slide.title-slide {
+        padding-left: 22px;
+      }
+      .toolbar-brand img {
+        height: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-shell" id="deckShell">
+    <div class="toolbar">
+      <div class="toolbar-brand">
+        <img src="https://merrakii.co.in/wp-content/uploads/2024/12/merrakii_2.png" alt="Merrakii" width="1343" height="1193" />
+        <div class="toolbar-copy">
+          <span class="toolbar-title">Digital Academic Portal</span>
+          <span class="toolbar-tagline"><span>Munjal Universal Consultancy</span></span>
+        </div>
+      </div>
+      <span class="toolbar-meta" id="slideCounter">1 / 14</span>
+    </div>
+
+    <div class="slide-stage" id="stage" role="group" aria-label="Slide" tabindex="-1">
+      <div class="slide-frame" id="frame">
+        <div class="slides" id="slides">
+          <!-- 1 -->
+          <section class="slide title-slide active" data-index="0">
+            <img class="hero-logo" src="https://merrakii.co.in/wp-content/uploads/2024/12/merrakii_2.png" alt="" width="1343" height="1193" />
+            <h1><span class="gradient-word">Digital Academic Portal</span></h1>
+            <p class="subtitle">MVP, Roadmap, Delivery &amp; Commercial Terms</p>
+            <p class="subtitle" style="margin-top: 28px;">Prepared by <strong>Tarun</strong></p>
+          </section>
+
+          <!-- 2 -->
+          <section class="slide" data-index="1">
+            <h2>Agenda</h2>
+            <ul>
+              <li><strong>MVP scope</strong> — what launches first</li>
+              <li><strong>Phased roadmap</strong> — after MVP</li>
+              <li><strong>How we build</strong> — approach &amp; stack (executive view)</li>
+              <li><strong>Timeline &amp; maintenance</strong></li>
+              <li><strong>Requirements we need from you</strong> — questionnaire</li>
+              <li><strong>Investment &amp; payment plan</strong></li>
+              <li><strong>Success, ownership, go-live &amp; risks</strong></li>
+            </ul>
+          </section>
+
+          <!-- 3 -->
+          <section class="slide" data-index="2">
+            <h2>MVP — what it contains</h2>
+            <ul>
+              <li><strong>Discovery:</strong> study areas → exams → institutes → programs; fees from payment plans where set</li>
+              <li><strong>Apply:</strong> authenticated flow — structured application (profile, academics, study mode, etc.)</li>
+              <li><strong>Pay:</strong> integrated checkout (e.g. Razorpay) with a clear production policy for demo/staging modes</li>
+              <li><strong>Post-payment:</strong> confirmation with enrollment reference; <strong>partner</strong> institutes → enrollment path; <strong>non-partner</strong> → qualified lead handoff (same student UX)</li>
+              <li><strong>Account:</strong> “My applications” with status and payment context</li>
+              <li><strong>Deferred for later phase:</strong> document uploads, full admin/CMS self-service (unless scoped in)</li>
+            </ul>
+          </section>
+
+          <!-- 4 -->
+          <section class="slide" data-index="3">
+            <h2>Phased feature plan</h2>
+            <ul>
+              <li><strong>Phase 1 — MVP launch:</strong> catalog, apply, pay, confirmations, partner vs non-partner logic, student account</li>
+              <li><strong>Phase 2 — Operations:</strong> content tools or CMS, institute onboarding workflows, notifications, richer reporting</li>
+              <li><strong>Phase 3 — Scale:</strong> document verification, CRM/deep integrations, analytics dashboards, automation</li>
+            </ul>
+            <p class="note">Phases are sequenced to control cost, risk, and time-to-value — depth agreed per phase.</p>
+          </section>
+
+          <!-- 5 -->
+          <section class="slide" data-index="4">
+            <h2>How we create the application</h2>
+            <ul>
+              <li><strong>Delivery model:</strong> iterative builds on a shared staging environment; sign-off gates before production</li>
+              <li><strong>Architecture:</strong> modern web app + API + database; secure sessions; validated forms end-to-end</li>
+              <li><strong>Quality:</strong> structured schemas for data, test-friendly flows, documented configuration (e.g. payments, origins)</li>
+              <li><strong>Handover:</strong> repository access, deployment notes, and operational runbook for your team or hosting partner</li>
+            </ul>
+            <p class="note">Detailed technical appendix available separately for engineering stakeholders.</p>
+          </section>
+
+          <!-- 6 -->
+          <section class="slide" data-index="5">
+            <h2>Timeline &amp; maintenance</h2>
+            <ul>
+              <li><strong>Timeline:</strong> fixed after questionnaire + design/content readiness; typical MVP ranges from several weeks to a few months depending on integrations and legal/payment readiness</li>
+              <li><strong>Maintenance (proposed):</strong> defined term post go-live (e.g. 3–6 months) covering agreed bug fixes, security patches, and environment health</li>
+              <li><strong>Exclusions (unless added):</strong> new features, major redesigns, third-party outages, day-to-day content entry</li>
+              <li><strong>Optional:</strong> extended support, SLAs, monitoring, and on-call — as add-ons</li>
+            </ul>
+          </section>
+
+          <!-- 7 -->
+          <section class="slide" data-index="6">
+            <h2>Requirement questionnaire (what we need)</h2>
+            <ul>
+              <li><strong>Catalog &amp; commercial:</strong> programs, fees, payment plans, partner vs non-partner rules per institute</li>
+              <li><strong>Brand &amp; content:</strong> copy, imagery, legal pages, refund/cancellation policy ownership</li>
+              <li><strong>Payments:</strong> Razorpay (or other) account, KYC, who receives settlements, test vs live timelines</li>
+              <li><strong>Operations:</strong> who handles student queries, institute coordination, lead routing for non-partners</li>
+              <li><strong>Compliance:</strong> data retention, consent, minors/parent data — legal counsel engagement as needed</li>
+              <li><strong>Infrastructure:</strong> domain, hosting preferences, admin users, launch date constraints</li>
+            </ul>
+          </section>
+
+          <!-- 8 -->
+          <section class="slide" data-index="7">
+            <h2>Cost to company</h2>
+            <ul>
+              <li><strong>MVP build:</strong> fixed fee or phased quotes based on signed scope (this deck + questionnaire)</li>
+              <li><strong>Recurring:</strong> hosting, domains, SSL, email/SMS if used, payment gateway fees — typically your accounts</li>
+              <li><strong>Change requests:</strong> estimated additively when scope moves beyond agreed MVP/phase</li>
+            </ul>
+            <p class="note">Specific numbers provided in a formal proposal after requirements workshop.</p>
+          </section>
+
+          <!-- 9 -->
+          <section class="slide" data-index="8">
+            <h2>Payment plan</h2>
+            <ul>
+              <li><strong>Milestone 1 — Kickoff:</strong> discovery signed; access to stakeholders &amp; materials</li>
+              <li><strong>Milestone 2 — Design / scope lock:</strong> UX &amp; technical scope approved</li>
+              <li><strong>Milestone 3 — MVP on staging:</strong> end-to-end demo for UAT</li>
+              <li><strong>Milestone 4 — Go-live:</strong> production cutover after acceptance</li>
+              <li><strong>Maintenance:</strong> monthly or bundled per agreed term</li>
+            </ul>
+            <p class="note">Percent splits and invoicing dates aligned to your procurement process.</p>
+          </section>
+
+          <!-- 10 -->
+          <section class="slide" data-index="9">
+            <h2>Success metrics &amp; ownership</h2>
+            <ul>
+              <li><strong>Metrics:</strong> applications started/completed, payment conversion, partner enrollments vs non-partner leads, time-to-confirm</li>
+              <li><strong>RACI (summary):</strong> you own catalog accuracy, institute relationships, student support policy; we own build, deployment mechanics, and agreed defect fixes</li>
+              <li><strong>Joint:</strong> UAT sign-off, launch communications, payment go-live checklist</li>
+            </ul>
+          </section>
+
+          <!-- 11 -->
+          <section class="slide" data-index="10">
+            <h2>Go-live readiness</h2>
+            <ul>
+              <li>Production hosting, backups, domain &amp; SSL</li>
+              <li>Live payment gateway certification; <strong>demo checkout disabled</strong> in production per policy</li>
+              <li>Environment separation (staging vs production)</li>
+              <li><strong>Trust &amp; compliance:</strong> student/parent data handling, consent, and published policies — aligned with your legal counsel</li>
+              <li>Monitoring and incident basics — scoped under maintenance or infra add-on</li>
+            </ul>
+          </section>
+
+          <!-- 12 -->
+          <section class="slide" data-index="11">
+            <h2>Risks &amp; dependencies</h2>
+            <ul>
+              <li>Late institute agreements or incomplete program/fee data</li>
+              <li>Payment provider approval timelines</li>
+              <li>Legal/policy delays affecting copy and data practices</li>
+              <li>Scope creep without change control — mitigated by phased roadmap</li>
+            </ul>
+          </section>
+
+          <!-- 13 -->
+          <section class="slide" data-index="12">
+            <h2>Next steps</h2>
+            <ul>
+              <li>Complete requirement questionnaire &amp; nominate owners</li>
+              <li>Workshop: catalog sample + one full partner + one non-partner journey</li>
+              <li>Formal proposal: scope, timeline, investment, payment milestones, maintenance term</li>
+              <li>Contract &amp; kickoff</li>
+            </ul>
+          </section>
+
+          <!-- 14 -->
+          <section class="slide title-slide" data-index="13">
+            <img class="hero-logo" src="https://merrakii.co.in/wp-content/uploads/2024/12/merrakii_2.png" alt="" width="1343" height="1193" />
+            <h1>Thank you</h1>
+            <p class="subtitle">Questions &amp; discussion</p>
+            <p class="note" style="margin-top: 36px;">Use arrow keys to move between slides.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bar">
+      <span>Navigate with keyboard</span>
+      <span><kbd>←</kbd> previous</span>
+      <span><kbd>→</kbd> next</span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const total = slides.length;
+      const counterEl = document.getElementById("slideCounter");
+      const deckShell = document.getElementById("deckShell");
+
+      let current = 0;
+
+      function showSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= total) index = total - 1;
+        current = index;
+        slides.forEach((s, i) => s.classList.toggle("active", i === current));
+        counterEl.textContent = current + 1 + " / " + total;
+      }
+
+      function next() {
+        if (current < total - 1) showSlide(current + 1);
+        else showSlide(0);
+      }
+
+      function prev() {
+        if (current > 0) showSlide(current - 1);
+        else showSlide(total - 1);
+      }
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          prev();
+        } else if (e.key === "ArrowRight") {
+          e.preventDefault();
+          next();
+        } else if (e.key === "Home") {
+          e.preventDefault();
+          showSlide(0);
+        } else if (e.key === "End") {
+          e.preventDefault();
+          showSlide(total - 1);
+        }
+      });
+
+      deckShell.setAttribute("tabindex", "0");
+      deckShell.setAttribute("role", "application");
+      deckShell.setAttribute("aria-label", "Presentation. Use arrow keys to change slides.");
+      deckShell.focus({ preventScroll: true });
+      showSlide(0);
+    })();
+  </script>
+</body>
+</html>

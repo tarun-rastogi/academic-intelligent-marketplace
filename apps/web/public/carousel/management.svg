@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="288" height="480" viewBox="0 0 288 480" role="img" aria-label="Management aptitude tests">
+  <defs>
+    <linearGradient id="mgmtGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a16207"/>
+      <stop offset="100%" stop-color="#422006"/>
+    </linearGradient>
+  </defs>
+  <rect width="288" height="480" fill="url(#mgmtGrad)" rx="12"/>
+  <text x="144" y="220" text-anchor="middle" fill="#ffffff" font-family="system-ui,sans-serif" font-size="26" font-weight="700">Management</text>
+  <text x="144" y="258" text-anchor="middle" fill="rgba(255,255,255,0.88)" font-family="system-ui,sans-serif" font-size="14">CAT &#183; XAT &#183; CMAT &#183; SNAP</text>
+</svg>

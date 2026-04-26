@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: dam-postgres
+    environment:
+      POSTGRES_USER: dam
+      POSTGRES_PASSWORD: dam
+      POSTGRES_DB: dam
+    ports:
+      - "5433:5432"
+    volumes:
+      - dam_pg_data:/var/lib/postgresql/data
+
+volumes:
+  dam_pg_data:

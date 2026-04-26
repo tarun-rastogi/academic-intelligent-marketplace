@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Proposal — Academic Intelligent Marketplace | Merrakii</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #1a1d24;
+      --muted: #4a505c;
+      --line: #d8dce4;
+      --accent: #b01f24;
+      --accent-soft: #f5e8e9;
+      --paper: #ffffff;
+      --wash: #f6f7f9;
+    }
+    * { box-sizing: border-box; }
+    html { font-size: 15px; }
+    body {
+      margin: 0;
+      font-family: "Source Sans 3", system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--wash);
+      line-height: 1.5;
+    }
+    .toolbar {
+      max-width: 210mm;
+      margin: 0 auto 12px;
+      padding: 0 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-print {
+      font-family: inherit;
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      cursor: pointer;
+    }
+    .sheet {
+      max-width: 210mm;
+      margin: 20px auto 48px;
+      padding: 18mm 16mm 20mm;
+      background: var(--paper);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      border-radius: 2px;
+    }
+    .letterhead {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--line);
+    }
+    .letterhead strong { color: var(--ink); }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .doc-sub {
+      margin: 0 0 22px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    h2 {
+      margin: 22px 0 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--ink);
+      border-left: 4px solid var(--accent);
+      padding-left: 10px;
+    }
+    h3 {
+      margin: 14px 0 6px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    p {
+      margin: 0 0 10px;
+      text-align: justify;
+      text-wrap: pretty;
+      hyphens: auto;
+    }
+    ul {
+      margin: 6px 0 12px;
+      padding-left: 1.2rem;
+    }
+    li {
+      margin-bottom: 6px;
+      text-align: justify;
+      text-wrap: pretty;
+      hyphens: auto;
+    }
+    li::marker { color: var(--accent); }
+    .callout {
+      margin: 16px 0;
+      padding: 12px 14px;
+      background: var(--accent-soft);
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      font-size: 0.92rem;
+    }
+    .callout strong { color: var(--accent); }
+    footer.doc-foot {
+      margin-top: 28px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    @media print {
+      .toolbar { display: none; }
+      body { background: #fff; }
+      .sheet { box-shadow: none; margin: 0; max-width: none; }
+    }
+    @page { size: A4; margin: 14mm; }
+  </style>
+</head>
+<body>
+  <div class="toolbar no-print">
+    <button type="button" class="btn-print" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+  <article class="sheet">
+    <div class="letterhead">
+      <strong>Merrakii</strong> · Academic Intelligent Marketplace<br />
+      <a href="https://merrakii.co.in">merrakii.co.in</a><br />
+      Proposal contact: <span contenteditable="true">[email / phone]</span>
+    </div>
+
+    <h1>Proposal for Academic Intelligent Marketplace</h1>
+    <p class="doc-sub">Implementation services — web-first MVP, optional native mobile, and post–go-live maintenance options.</p>
+
+    <h2>Project overview</h2>
+    <p>
+      The objective is to deliver an <strong>Academic Intelligent Marketplace</strong> for the Indian higher-education and training segment: a <strong>student-centred web platform</strong> for <strong>guided discovery</strong>, <strong>institute &amp; services selection</strong>, <strong>structured application</strong>, <strong>payment</strong>, and <strong>post-payment confirmation</strong>. Merrakii does not replace institutes’ statutory or academic authority; it provides the digital rails for exploration, intake, and commercial transactions that partners agree to list on the platform.
+    </p>
+    <p>
+      The first release is deliberately <strong>focused and practical</strong>. Rather than digitising every edge case on day one, Phase 1 concentrates on a coherent web journey—search and browse, rich institute and programme detail, a governed apply-and-pay path, and operational visibility for your team. Deeper marketplace rules, mobile clients, and annual maintenance are staged so capital and risk stay aligned to adoption.
+    </p>
+    <p>
+      The solution comprises a <strong>customer-facing responsive web application</strong>, an <strong>admin / operations console</strong> for catalogue, partners, and exceptions, and optionally a <strong>light marketing or landing surface</strong> tied to the same brand. Native <strong>iOS and Android</strong> applications are offered as <strong>Phase 2</strong> once the web MVP and APIs are stable.
+    </p>
+
+    <h2>Platforms covered</h2>
+    <p>
+      <strong>Learners and counsellors</strong> interact primarily through the <strong>responsive web application</strong> (desktop and mobile browsers). <strong>Internal teams</strong> use a <strong>browser-based admin panel</strong> for listings, eligibility, intake status, and partner configuration. A <strong>compact marketing or brochure site</strong> (or designated landing routes within the product) supports campaigns, store policies, and trust content. <strong>Phase 2</strong> adds <strong>hybrid or native mobile clients</strong> on the same APIs when you choose to proceed.
+    </p>
+
+    <h2>Web application — scope (Phase 1 MVP)</h2>
+    <p>
+      The web experience is designed to be <strong>clear and fast</strong>: reduce dead ends, surface eligibility and next steps early, and keep the path from interest to payment auditable for both learner and partner.
+    </p>
+
+    <h3>Account and access</h3>
+    <p>
+      Users create an account with <strong>mobile OTP</strong> (or an agreed alternative such as email + OTP). Basic profile fields support discovery and application—name, contact, city or region, and stream or interest where relevant. Sensitive KYC beyond what you explicitly approve in the statement of work stays <strong>out of scope</strong> for the MVP unless separately specified.
+    </p>
+
+    <h3>Discovery and search</h3>
+    <p>
+      Learners can explore by <strong>field of study</strong>, <strong>course or programme</strong>, <strong>exam</strong>, <strong>institute</strong>, and other high-intent dimensions you prioritise in the workshop. Listings use <strong>cards or rows</strong> with short descriptors, key facts (fees where shown, intake windows if supplied), and a clear path to detail. Search supports <strong>structured filters</strong> on the catalog surface plus <strong>keyword search</strong> where agreed—complex NL search or third-party AI can be phased later.
+    </p>
+
+    <h3>Institute, course, exam, and catalog detail</h3>
+    <p>
+      Dedicated pages present <strong>trust-oriented</strong> information: overview, programmes, fees (as you supply), admissions and eligibility summaries, placements or outcomes if provided, and clear calls to action. Exam hubs can link to preparation and to programmes that accept the exam, within the content you approve.
+    </p>
+
+    <h3>Structured application and intake</h3>
+    <p>
+      The apply flow captures <strong>only the fields and documents</strong> defined in the signed scope—typically programme choice, academic snapshot, contact, and any institute-mandated checklist items you choose to digitise first. Submissions land in the <strong>admin queue</strong> with status suitable for your operations (e.g. submitted, under review, awaiting payment, confirmed). There is <strong>no commitment</strong> in the MVP to every institute’s bespoke PDF workflow unless explicitly listed.
+    </p>
+
+    <h3>Payment and confirmation</h3>
+    <p>
+      Where scoped, the platform supports <strong>payment initiation</strong> through an agreed gateway (merchant and legal arrangements remain client-side unless bundled). Post-payment, the learner sees <strong>confirmation</strong> and institute-facing views show <strong>paid / seat pipeline</strong> states you define. Refund and dispute rules follow <strong>your policy</strong> and gateway terms, implemented only as far as the SoW describes.
+    </p>
+
+    <h3>Notifications and help</h3>
+    <p>
+      <strong>Email and/or SMS</strong> notifications are used for milestones you select (application received, payment received, status change). A <strong>FAQ</strong> and contact paths are included; full in-app chat or ticketing is <strong>optional</strong> and priced separately if required.
+    </p>
+
+    <h2>Admin panel — scope</h2>
+    <p>
+      The admin console is where <strong>catalogue truth</strong> and <strong>operational throughput</strong> are managed. It is intentionally straightforward for Phase 1.
+    </p>
+
+    <h3>Dashboard</h3>
+    <p>
+      A summary view of <strong>applications or enquiries</strong>, status distribution, recent submissions, and simple alerts (e.g. stale items) so supervisors can triage without exporting everything first.
+    </p>
+
+    <h3>Lead and application management</h3>
+    <p>
+      All structured submissions from the web appear in a <strong>searchable list</strong>. Each record shows agreed fields (learner, programme, amounts, status, timestamps). Staff can <strong>open a record</strong>, add <strong>internal notes</strong>, and transition status per your workflow map.
+    </p>
+
+    <h3>Partner and programme setup</h3>
+    <p>
+      Admins maintain <strong>institutes or partners</strong>, <strong>programmes</strong>, <strong>fee bands</strong> you choose to expose, <strong>eligibility text</strong>, and <strong>activation flags</strong>. Content shown on public pages is <strong>sourced from this layer</strong> so marketing and product stay aligned.
+    </p>
+
+    <h3>Exports and reporting</h3>
+    <p>
+      <strong>CSV export</strong> (or similar) of application/enquiry data with basic filters—date range, programme, institute, status—supports finance and partner reporting without building a full BI suite in MVP.
+    </p>
+
+    <h3>Content updates</h3>
+    <p>
+      <strong>FAQ</strong> and selected static blocks can be edited from the admin when agreed, so operations can react to policy or copy changes without a code release for every tweak.
+    </p>
+
+    <h2>Marketing website</h2>
+    <p>
+      If included in scope, a <strong>lightweight marketing presence</strong> (dedicated small site or key landing pages) explains positioning, how the marketplace works, benefits, FAQ, and contact. A simple <strong>lead or interest form</strong> can feed the same admin pipeline. App download links appear when <strong>Phase 2</strong> mobile is live.
+    </p>
+
+    <h2>Overall flow</h2>
+    <p>
+      A learner opens the web product, discovers institutes or programmes, opens detail pages, and completes a <strong>structured application</strong>. If payment is in scope, they pay through the integrated path and receive <strong>confirmation</strong>. The record appears in the admin panel; staff review, update status, and optionally export data for institute partners. Institutes or partners continue <strong>verification and academic decisions</strong> under their own policies unless you contract Merrakii for deeper workflow in a later phase.
+    </p>
+
+    <h2>Technology stack (indicative)</h2>
+    <ul>
+      <li><strong>Web client:</strong> modern responsive UI (e.g. React / Next.js pattern) with server-side rendering where it improves performance and SEO.</li>
+      <li><strong>Admin console:</strong> web application on the same platform stack or agreed SPA pattern.</li>
+      <li><strong>APIs and services:</strong> Node.js–style services (e.g. Fastify) with documented REST (or agreed GraphQL) contracts.</li>
+      <li><strong>Data:</strong> PostgreSQL with an ORM layer (e.g. Prisma) for schema evolution and auditability.</li>
+      <li><strong>Hosting:</strong> cloud deployment on a major provider (e.g. AWS or equivalent) with segregated environments for staging and production.</li>
+      <li><strong>Phase 2 mobile:</strong> native or cross-platform build (e.g. Flutter or native Swift/Kotlin) against the same APIs—final choice recorded in the mobility specification.</li>
+    </ul>
+
+    <h2>Key assumptions</h2>
+    <ul>
+      <li>Institute and programme <strong>content accuracy</strong>, contracts, and <strong>legal copy</strong> remain client-owned; Merrakii implements agreed presentation and workflows.</li>
+      <li><strong>Payment gateway</strong> merchant accounts, settlements, and statutory filings sit with the client unless explicitly scoped otherwise.</li>
+      <li><strong>No undocumented AI</strong> in MVP: any intelligent assistance is introduced only with agreed providers, data handling, and governance.</li>
+      <li><strong>Phase 1</strong> delivery is time-boxed per the commercial schedule; scope changes flow through <strong>change control</strong>.</li>
+    </ul>
+
+    <h2>Out of scope (unless added by change request)</h2>
+    <ul>
+      <li>Full document lifecycle, OCR, or legal review of uploaded materials beyond agreed intake fields.</li>
+      <li>Deep integrations with every institute’s legacy student information system in Phase 1.</li>
+      <li>Automated seat allocation or admission decision engines.</li>
+      <li>Partner-facing self-service portals for every vendor in the first release.</li>
+      <li>Advanced analytics, data science pipelines, or unfettered LLM features without a signed intelligent-layer package.</li>
+    </ul>
+
+    <h2>Commercial structure (summary)</h2>
+    <p>
+      <strong>Phase 1 — web application development.</strong> Total duration when run one after another is <strong>12 weeks</strong> (4 + 2 + 2 + 2 + 2). Professional fees are in INR and exclude GST unless otherwise stated.
+    </p>
+    <p>
+      Fees and calendars are detailed in the companion <strong>quotation</strong> (<em>quotation-academic-intelligent-marketplace-inr.html</em>). In outline: <strong>Phase 1</strong> is the <strong>web MVP</strong> (sequential programme, <strong>12 weeks</strong>, <strong>₹6 lakh + GST</strong> for professional fees as currently tabled). <strong>Phase 2</strong> covers <strong>iOS and Android</strong> development (<strong>2 weeks</strong> each, <strong>₹1 lakh</strong> per platform + GST as tabled). <strong>Phase 3</strong> is an <strong>annual AMC</strong> (<strong>₹1 lakh 20 thousand + GST</strong> for one year as tabled). After <strong>Phase 1 development completes</strong>, you receive <strong>three months of complimentary maintenance</strong> on the delivered scope; you may then opt into Phase 3 AMC or continue with scoped enhancements.
+    </p>
+
+    <div class="callout">
+      <strong>Engagement lead:</strong> Tarun Rastogi — delivery ownership, programme governance, and technical leadership, with extensive experience shipping regulated, client-facing platforms in multinational environments.
+    </div>
+
+    <footer class="doc-foot">
+      This proposal is indicative until superseded by a signed statement of work and the current fee tables. Merrakii and Academic Intelligent Marketplace are used here as project names; adjust legal entity lines in the contract pack.
+    </footer>
+  </article>
+</body>
+</html>
