@@ -5964,7 +5964,7 @@
               if (statusEl) {
                 if (x.ok && x.body && x.body.ok) {
                   statusEl.textContent =
-                    "Saved. Your answers are appended to the Submission log in Merrakii_Business_Capture.xlsx in the GitHub repository (after the server commits). You may submit again to add more.";
+                    "Saved. Your answers are stored in the Submission log in Merrakii_Business_Capture.xlsx (one row per question; submit again to update).";
                 } else {
                   const err = (x.body && (x.body.error || x.body.message)) || "Request failed";
                   statusEl.textContent = "Could not save (" + (x.status || "?") + "): " + err;

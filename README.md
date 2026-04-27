@@ -101,7 +101,7 @@ Plus catalog tables: `AcademicField`, `Exam`, `Institute`, `Program`.
 ## Digi deck & Executive Inputs (HTML + Excel)
 
 - Static deck: [docs/digi.html](docs/digi.html) — go to the **Executive inputs** slide, answer per section, then **Submit to workbook (Excel)**.
-- Workbook: [docs/Merrakii_Business_Capture.xlsx](docs/Merrakii_Business_Capture.xlsx) — one sheet per section (Company content, Brand and contact, …). Column **A** is the question, column **B** is a placeholder for answers. The first sheet, **Submission log**, is an **append-only** history: every successful submit (from any visitor) adds rows with `Timestamp (UTC)`, section, `Q#`, question text, and the response. Regenerate the questionnaire structure (including the **Submission log** header) with:
+- Workbook: [docs/Merrakii_Business_Capture.xlsx](docs/Merrakii_Business_Capture.xlsx) — one sheet per section (Company content, Brand and contact, …). Column **A** is the question, column **B** is a placeholder for answers. The first sheet, **Submission log**, stores **one row per section + question number**: each submit **updates** that row (timestamp and response) if it already exists, or **inserts** it once. Columns: `Timestamp (UTC)`, section, `Q#`, question text, response. **Note:** two different visitors editing the same question share one row (last submit wins). Regenerate the questionnaire structure (including the **Submission log** header) with:
   `python scripts/generate_merrakii_business_questionnaire.py` (openpyxl required).
 
 **Why a separate service?** GitHub Pages only serves static files. It cannot run code or write to your repository. To store responses in [docs/Merrakii_Business_Capture.xlsx](docs/Merrakii_Business_Capture.xlsx) in GitHub, run [executive-inputs-server/app.py](executive-inputs-server/app.py) on a host you control, give it a **GitHub personal access token** (Contents: read/write on that repo) and repository metadata via environment variables, then set `window.EXEC_INPUTS_API_BASE` in [docs/executive-inputs-config.js](docs/executive-inputs-config.js) to the service’s public URL and commit. Never put the token in the browser; it stays on the server only.
@@ -137,7 +137,7 @@ The capture API is served by a container built from [executive-inputs-server/Doc
   python executive-inputs-server/app.py
   ```
 
-  Open [http://127.0.0.1:5050/digi.html](http://127.0.0.1:5050/digi.html) — same origin allows submit without `EXEC_INPUTS_API_BASE`. Writes append to the local `docs/Merrakii_Business_Capture.xlsx`.
+  Open [http://127.0.0.1:5050/digi.html](http://127.0.0.1:5050/digi.html) — same origin allows submit without `EXEC_INPUTS_API_BASE`. Writes upsert into the local `docs/Merrakii_Business_Capture.xlsx` Submission log.
 
 **Public GitHub Pages** (`https://<user>.github.io/<repo>/digi.html`): set `EXEC_INPUTS_API_BASE` in `executive-inputs-config.js` to the deployed service URL, push, and wait for the Pages build.
 

@@ -42,7 +42,7 @@ def add_sheet(wb, name: str, intro: str, questions: list[str]):
 
 
 def add_submission_log(wb, index: int = 0):
-    """Append-only log for all visitors' submissions (Timestamp, Section, Q#, Question, Response)."""
+    """Submission log: one row per Section + Q#; resubmits update the same row (server-side upsert)."""
     ws = wb.create_sheet("Submission log", index)
     ws.append(["Timestamp (UTC)", "Section", "Q#", "Question", "Response"])
     style_header(ws)

@@ -1,13 +1,13 @@
 """
-Serve docs/digi.html and POST /api/executive-inputs to append each submission
-to the "Submission log" sheet in docs/Merrakii_Business_Capture.xlsx.
+Serve docs/digi.html and POST /api/executive-inputs to upsert into the
+"Submission log" sheet in docs/Merrakii_Business_Capture.xlsx (one row per Section + Q#; resubmit updates).
 
 Storage modes
 -------------
 * Local: write to a path on disk (``EXECUTIVE_INPUTS_XLSX`` or default ``docs/`` in repo).
 * GitHub: set ``EXECUTIVE_INPUTS_GITHUB_TOKEN`` and ``EXECUTIVE_INPUTS_GITHUB_REPO`` (e.g. ``owner/name``);
-  the service GETs the file, appends log rows, PUTs a commit. Required for a static GitHub Pages deck so
-  answers accumulate in the repository workbook.
+  the service GETs the file, upserts log rows, PUTs a commit. Required for static GitHub Pages
+  so answers are stored in the repository workbook.
 
 Run: python executive-inputs-server/app.py
 Or:  python -m executive-inputs-server.app
@@ -130,18 +130,55 @@ def _question_data_rows(ws):
     return out
 
 
-def _append_submission_log(wb, payload: dict) -> int:
-    """Return number of log rows added."""
+def _coerce_qnum_1based(cell_val) -> int | None:
+    if cell_val is None:
+        return None
+    try:
+        f = float(cell_val)
+        i = int(f)
+        if i == f:
+            return i
+    except (TypeError, ValueError):
+        pass
+    try:
+        s = str(cell_val).strip()
+        if not s:
+            return None
+        return int(float(s)) if "." in s else int(s)
+    except (TypeError, ValueError):
+        return None
+
+
+def _find_submission_log_rows_for_question(ws, section_name: str, qnum_1based: int) -> list[int]:
+    """1-based row indices matching Section + Q# (duplicates can exist from older appends)."""
+    out: list[int] = []
+    for r in range(2, (ws.max_row or 1) + 1):
+        sec = ws.cell(r, 2).value
+        if sec is None or str(sec).strip() != section_name:
+            continue
+        qn = _coerce_qnum_1based(ws.cell(r, 3).value)
+        if qn == qnum_1based:
+            out.append(r)
+    return out
+
+
+def _dedup_extra_log_rows(ws, keep_row: int, all_rows: list[int]) -> None:
+    for r in sorted((x for x in all_rows if x != keep_row), reverse=True):
+        ws.delete_rows(r, 1)
+
+
+def _upsert_submission_log(wb, payload: dict) -> int:
+    """Update or insert one row per (Section, Q#). Returns number of rows written (inserts + updates)."""
     if not isinstance(payload, dict):
         return 0
     ws = _ensure_log_sheet(wb)
-    next_row = (ws.max_row or 1) + 1
-    added = 0
-
+    changed = 0
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     for section_name, answers in payload.items():
-        if not isinstance(answers, dict) or not isinstance(section_name, str):
+        if not isinstance(section_name, str) or section_name.startswith("_"):
+            continue
+        if not isinstance(answers, dict):
             continue
         if section_name not in wb.sheetnames or section_name == LOG_SHEET:
             continue
@@ -154,22 +191,37 @@ def _append_submission_log(wb, payload: dict) -> int:
                 continue
             if qi < 0 or qi >= len(qrows):
                 continue
-            row = qrows[qi]
-            qtext = s_ws.cell(row=row, column=1).value
+            srow = qrows[qi]
+            qtext = s_ws.cell(row=srow, column=1).value
             if qtext is not None and str(qtext).strip() == "—":
                 continue
             qtext = "" if qtext is None else str(qtext)
             ans = "" if value is None else str(value)
-            if not ans.strip():
-                continue
-            ws.cell(row=next_row, column=1, value=ts)
-            ws.cell(row=next_row, column=2, value=section_name)
-            ws.cell(row=next_row, column=3, value=qi + 1)
-            ws.cell(row=next_row, column=4, value=qtext)
-            ws.cell(row=next_row, column=5, value=ans)
-            next_row += 1
-            added += 1
-    return added
+            qn = qi + 1
+            matches = _find_submission_log_rows_for_question(ws, section_name, qn)
+            if len(matches) > 1:
+                keep = min(matches)
+                _dedup_extra_log_rows(ws, keep, matches)
+                matches = [keep]
+            if len(matches) == 1:
+                found = matches[0]
+                ws.cell(row=found, column=1, value=ts)
+                ws.cell(row=found, column=2, value=section_name)
+                ws.cell(row=found, column=3, value=qn)
+                ws.cell(row=found, column=4, value=qtext)
+                ws.cell(row=found, column=5, value=ans)
+                changed += 1
+            else:
+                if not str(ans).strip():
+                    continue
+                next_row = (ws.max_row or 1) + 1
+                ws.cell(row=next_row, column=1, value=ts)
+                ws.cell(row=next_row, column=2, value=section_name)
+                ws.cell(row=next_row, column=3, value=qn)
+                ws.cell(row=next_row, column=4, value=qtext)
+                ws.cell(row=next_row, column=5, value=ans)
+                changed += 1
+    return changed
 
 
 def _load_workbook_from_bytes(b: bytes):
@@ -251,23 +303,23 @@ def _process_payload_with_meta(payload: dict) -> tuple[int, str | None]:
                     "Commit docs/Merrakii_Business_Capture.xlsx from this repository first."
                 )
             wb = _load_workbook_from_bytes(state.content)
-            added = _append_submission_log(wb, payload)
-            if added == 0:
-                return 0, "no non-empty answers to record"
+            n_changed = _upsert_submission_log(wb, payload)
+            if n_changed == 0:
+                return 0, "nothing to update"
             new_bytes = _workbook_to_bytes(wb)
-            msg = f"chore(executive-inputs): append submission {datetime.now(timezone.utc).isoformat()}"
+            msg = f"chore(executive-inputs): upsert submission {datetime.now(timezone.utc).isoformat()}"
             if github_put_file(new_bytes, msg, state.sha):
-                return added, None
+                return n_changed, None
         raise RuntimeError("Could not update GitHub file (repeated conflict). Try again in a few seconds.")
     path = Path(os.environ.get("EXECUTIVE_INPUTS_XLSX", str(DEFAULT_XLSX)))
     if not path.is_file():
         raise FileNotFoundError(f"Workbook not found: {path}")
     wb = load_workbook(path, read_only=False, data_only=False)
-    added = _append_submission_log(wb, payload)
-    if added == 0:
-        return 0, "no non-empty answers to record"
+    n_changed = _upsert_submission_log(wb, payload)
+    if n_changed == 0:
+        return 0, "nothing to update"
     wb.save(path)
-    return added, None
+    return n_changed, None
 
 
 @app.get("/")
