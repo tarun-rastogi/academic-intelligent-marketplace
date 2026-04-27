@@ -5683,6 +5683,7 @@
   </template>
 
   <script src="merrakii-business-capture-data.js"></script>
+  <script src="executive-inputs-config.js"></script>
   <script>
     (function () {
       const slides = Array.from(document.querySelectorAll(".slide"));
@@ -5909,11 +5910,20 @@
         actionsEl.hidden = false;
       }
 
+      function isLocalDevOrigin() {
+        var h = window.location.hostname || "";
+        return h === "localhost" || h === "127.0.0.1";
+      }
+
       function getSubmitUrl() {
-        if (typeof window.EXEC_INPUTS_API_BASE === "string" && window.EXEC_INPUTS_API_BASE) {
-          return window.EXEC_INPUTS_API_BASE.replace(/\/$/, "") + "/api/executive-inputs";
+        var base = typeof window.EXEC_INPUTS_API_BASE === "string" ? window.EXEC_INPUTS_API_BASE.trim() : "";
+        if (base) {
+          return base.replace(/\/$/, "") + "/api/executive-inputs";
         }
-        if (window.location.protocol === "http:" || window.location.protocol === "https:") {
+        if (
+          (window.location.protocol === "http:" || window.location.protocol === "https:") &&
+          isLocalDevOrigin()
+        ) {
           return new URL("/api/executive-inputs", window.location.origin).href;
         }
         return null;
@@ -5922,21 +5932,24 @@
       if (submitBtn) {
         submitBtn.addEventListener("click", function () {
           const url = getSubmitUrl();
-          if (statusEl) {
-            if (!url) {
+          if (!url) {
+            if (statusEl) {
               statusEl.textContent =
-                "Open this page through the executive-inputs server (see docs README), or set window.EXEC_INPUTS_API_BASE to your API base URL, then try again.";
-              return;
+                "Set window.EXEC_INPUTS_API_BASE in executive-inputs-config.js to your deployed capture service URL, then commit. Static hosting cannot write to GitHub; see repository README.";
             }
-            statusEl.textContent = "Submitting…";
+            return;
           }
+
+          if (statusEl) {
+            statusEl.textContent = "Submitting to shared workbook…";
+          }
+          submitBtn.disabled = true;
           const all = loadResponses();
           const token =
-            typeof window.EXEC_INPUTS_SUBMIT_TOKEN === "string" ? window.EXEC_INPUTS_SUBMIT_TOKEN : "";
+            typeof window.EXEC_INPUTS_SUBMIT_TOKEN === "string" ? window.EXEC_INPUTS_SUBMIT_TOKEN.trim() : "";
           const headers = { "Content-Type": "application/json" };
           if (token) headers["X-Submit-Token"] = token;
-          submitBtn.disabled = true;
-          fetch(url, { method: "POST", headers, body: JSON.stringify(all) })
+          fetch(url, { method: "POST", headers, body: JSON.stringify(all), mode: "cors" })
             .then(function (r) {
               return r
                 .json()
@@ -5948,21 +5961,21 @@
                 });
             })
             .then(function (x) {
-              if (x.ok && x.body && x.body.ok) {
-                if (statusEl) {
-                  statusEl.textContent = "Saved to the workbook. Re-submit any time to update answers.";
-                }
-              } else {
-                const err = (x.body && (x.body.error || x.body.message)) || "Request failed";
-                if (statusEl) {
-                  statusEl.textContent = "Could not save (" + x.status + "): " + err;
+              if (statusEl) {
+                if (x.ok && x.body && x.body.ok) {
+                  statusEl.textContent =
+                    "Saved. Your answers are appended to the Submission log in Merrakii_Business_Capture.xlsx in the GitHub repository (after the server commits). You may submit again to add more.";
+                } else {
+                  const err = (x.body && (x.body.error || x.body.message)) || "Request failed";
+                  statusEl.textContent = "Could not save (" + (x.status || "?") + "): " + err;
                 }
               }
             })
             .catch(function (e) {
               if (statusEl) {
                 statusEl.textContent =
-                  "Network error. Is the server running? " + (e && e.message ? e.message : "");
+                  "Network error. Is the capture API running and CORS set for this origin? " +
+                  (e && e.message ? e.message : "");
               }
             })
             .then(function () {

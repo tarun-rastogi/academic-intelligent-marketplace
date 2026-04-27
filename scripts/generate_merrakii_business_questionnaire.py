@@ -41,9 +41,18 @@ def add_sheet(wb, name: str, intro: str, questions: list[str]):
     autosize(ws)
 
 
+def add_submission_log(wb, index: int = 0):
+    """Append-only log for all visitors' submissions (Timestamp, Section, Q#, Question, Response)."""
+    ws = wb.create_sheet("Submission log", index)
+    ws.append(["Timestamp (UTC)", "Section", "Q#", "Question", "Response"])
+    style_header(ws)
+    autosize(ws)
+
+
 def main():
     wb = Workbook()
     wb.remove(wb.active)
+    add_submission_log(wb, 0)
 
     add_sheet(
         wb,

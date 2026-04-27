@@ -1,0 +1,21 @@
+# Render Blueprint: after push, import this repo in Render → New → Blueprint
+# and add the secret: EXECUTIVE_INPUTS_GITHUB_TOKEN (PAT with Contents: read/write for this repo).
+# Service name → public URL: https://merrakii-executive-capture.onrender.com
+
+services:
+  - type: web
+    name: merrakii-executive-capture
+    runtime: docker
+    dockerfilePath: ./executive-inputs-server/Dockerfile
+    plan: free
+    region: oregon
+    healthCheckPath: /api/health
+    envVars:
+      - key: EXECUTIVE_INPUTS_GITHUB_REPO
+        value: tarun-rastogi/academic-intelligent-marketplace
+      - key: EXECUTIVE_INPUTS_GITHUB_FILE
+        value: docs/Merrakii_Business_Capture.xlsx
+      - key: CORS_ALLOW_ORIGIN
+        value: https://tarun-rastogi.github.io
+      - key: EXECUTIVE_INPUTS_GITHUB_TOKEN
+        sync: false

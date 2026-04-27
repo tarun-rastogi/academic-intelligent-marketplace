@@ -101,8 +101,34 @@ Plus catalog tables: `AcademicField`, `Exam`, `Institute`, `Program`.
 ## Digi deck & Executive Inputs (HTML + Excel)
 
 - Static deck: [docs/digi.html](docs/digi.html) — go to the **Executive inputs** slide, answer per section, then **Submit to workbook (Excel)**.
-- Workbook: [docs/Merrakii_Business_Capture.xlsx](docs/Merrakii_Business_Capture.xlsx) — one sheet per section (Company content, Brand and contact, …). Column **A** is the question, column **B** is the answer. (An older [docs/Executive_Inputs_Questionnaire.xlsx](docs/Executive_Inputs_Questionnaire.xlsx) in the tree is a separate legacy export; the deck and server use **Merrakii_Business_Capture.xlsx**.) Re-submit from the page at any time; answers overwrite column **B** for the same questions.
-- Browsers cannot write to disk without a small server. Run the helper app and open the deck at its URL (same origin so submit works without extra config):
+- Workbook: [docs/Merrakii_Business_Capture.xlsx](docs/Merrakii_Business_Capture.xlsx) — one sheet per section (Company content, Brand and contact, …). Column **A** is the question, column **B** is a placeholder for answers. The first sheet, **Submission log**, is an **append-only** history: every successful submit (from any visitor) adds rows with `Timestamp (UTC)`, section, `Q#`, question text, and the response. Regenerate the questionnaire structure (including the **Submission log** header) with:
+  `python scripts/generate_merrakii_business_questionnaire.py` (openpyxl required).
+
+**Why a separate service?** GitHub Pages only serves static files. It cannot run code or write to your repository. To store responses in [docs/Merrakii_Business_Capture.xlsx](docs/Merrakii_Business_Capture.xlsx) in GitHub, run [executive-inputs-server/app.py](executive-inputs-server/app.py) on a host you control, give it a **GitHub personal access token** (Contents: read/write on that repo) and repository metadata via environment variables, then set `window.EXEC_INPUTS_API_BASE` in [docs/executive-inputs-config.js](docs/executive-inputs-config.js) to the service’s public URL and commit. Never put the token in the browser; it stays on the server only.
+
+**Deploy (example env for GitHub-backed storage)**
+
+| Variable | Purpose |
+|----------|---------|
+| `EXECUTIVE_INPUTS_GITHUB_TOKEN` | Fine-grained or classic PAT with **Contents: Read and write** on this repository |
+| `EXECUTIVE_INPUTS_GITHUB_REPO` | e.g. `tarun-rastogi/academic-intelligent-marketplace` |
+| `EXECUTIVE_INPUTS_GITHUB_FILE` | Default `docs/Merrakii_Business_Capture.xlsx` |
+| `EXECUTIVE_INPUTS_GITHUB_BRANCH` | Default `main` |
+| `CORS_ALLOW_ORIGIN` | Your GitHub Pages origin, e.g. `https://tarun-rastogi.github.io` (or `*` for any origin) |
+| `PORT` | HTTP port (e.g. Render sets this) |
+| `EXECUTIVE_INPUTS_SUBMIT_TOKEN` | (Optional) if set, clients must pass the same value as `X-Submit-Token` and [docs/executive-inputs-config.js](docs/executive-inputs-config.js) `EXEC_INPUTS_SUBMIT_TOKEN` (only use if you are comfortable embedding that string in a public file) |
+
+**Render (this repo is wired for it)**
+
+1. Push these changes to `main` on GitHub.
+2. In [Render](https://dashboard.render.com/): **New** → **Blueprint** → connect this repository → apply [render.yaml](render.yaml).
+3. When prompted, create the **secret** `EXECUTIVE_INPUTS_GITHUB_TOKEN` (GitHub → Settings → Developer settings → [Fine-grained token](https://github.com/settings/tokens?type=beta): grant **Contents: Read and write** for this repository only, branch: `main`).
+4. After deploy, open `https://merrakii-executive-capture.onrender.com/api/health` and confirm `github_capture.configured` is `true` (it stays `true` as long as the token is set; it is never exposed to the client).
+5. The deck in [docs/executive-inputs-config.js](docs/executive-inputs-config.js) points at the same default hostname; if you rename the service in Render, change that one line to your `https://<name>.onrender.com` and push. If the GitHub repository owner/name is not `tarun-rastogi/academic-intelligent-marketplace`, update `EXECUTIVE_INPUTS_GITHUB_REPO` in the Render environment or in `render.yaml` before applying the Blueprint.
+
+The capture API is served by a container built from [executive-inputs-server/Dockerfile](executive-inputs-server/Dockerfile) (build context: repository root). Local test: `docker build -f executive-inputs-server/Dockerfile -t merrakii-exec:local .` and run with the same environment variables.
+
+**Local (disk only, no GitHub):**
 
   ```bash
   python3 -m venv .venv
@@ -111,15 +137,9 @@ Plus catalog tables: `AcademicField`, `Exam`, `Institute`, `Program`.
   python executive-inputs-server/app.py
   ```
 
-  Then open [http://127.0.0.1:5050/digi.html](http://127.0.0.1:5050/digi.html) (or [http://127.0.0.1:5050/](http://127.0.0.1:5050/) for the same page). Optional: `EXECUTIVE_INPUTS_SUBMIT_TOKEN` and header `X-Submit-Token` (see [executive-inputs-server/app.py](executive-inputs-server/app.py)).
+  Open [http://127.0.0.1:5050/digi.html](http://127.0.0.1:5050/digi.html) — same origin allows submit without `EXEC_INPUTS_API_BASE`. Writes append to the local `docs/Merrakii_Business_Capture.xlsx`.
 
-- Regenerate the Excel from the generator script and re-export the JS the deck uses:
-
-  ```bash
-  . .venv/bin/activate  # with openpyxl installed
-  python scripts/generate_merrakii_business_questionnaire.py
-  python scripts/export_merrakii_capture_js.py
-  ```
+**Public GitHub Pages** (`https://<user>.github.io/<repo>/digi.html`): set `EXEC_INPUTS_API_BASE` in `executive-inputs-config.js` to the deployed service URL, push, and wait for the Pages build.
 
 ## GitHub (host the repo)
 
@@ -135,7 +155,7 @@ Plus catalog tables: `AcademicField`, `Exam`, `Institute`, `Program`.
    git push -u origin main
    ```
 
-3. If you also want the static **digi** deck on **GitHub Pages** (read-only, no submit): enable Pages from branch `main` and folder `docs/`, and open `https://<user>.github.io/<repo>/digi.html`. **Submit to Excel** still requires a server with the workbook (local Flask, or deploy `executive-inputs-server` to any host and set the workbook path with `EXECUTIVE_INPUTS_XLSX`).
+3. Enable **GitHub Pages** from branch `main` and folder `docs/`, and open `https://<user>.github.io/<repo>/digi.html`. To save submissions into the shared **Merrakii_Business_Capture.xlsx** in the repo, deploy `executive-inputs-server` with the GitHub env vars above and set `EXECUTIVE_INPUTS_API_BASE` in `docs/executive-inputs-config.js` (see **Digi deck & Executive Inputs**).
 
 ## Production notes
 

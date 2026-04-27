@@ -1,0 +1,8 @@
+**/node_modules
+**/.next
+.git
+.venv
+.venv-excel
+apps/web
+apps/api
+packages
