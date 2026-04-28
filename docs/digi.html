@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Digital Academic Portal — Executive Briefing | Merrakii</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -369,6 +369,8 @@
     html, body {
       margin: 0;
       height: 100%;
+      min-height: 100%;
+      min-height: 100dvh;
       overflow: hidden;
       font-family: var(--font-body);
       color: var(--mk-text);
@@ -379,6 +381,9 @@
 
     .deck-shell {
       height: 100%;
+      min-height: 100%;
+      min-height: 100dvh;
+      max-height: 100dvh;
       display: flex;
       flex-direction: column;
       padding: 12px 16px 16px;
@@ -2328,6 +2333,133 @@
         align-items: center;
         justify-content: center;
         gap: 4px;
+      }
+    }
+
+    /* Phones & narrow portrait: fill vertical space (16×9 frame is unreadably short below ~768px) */
+    @media (max-width: 767.98px) {
+      .deck-shell {
+        padding:
+          max(6px, env(safe-area-inset-top, 0px))
+          max(6px, env(safe-area-inset-right, 0px))
+          max(6px, env(safe-area-inset-bottom, 0px))
+          max(6px, env(safe-area-inset-left, 0px));
+        gap: 4px;
+      }
+
+      .chrome {
+        padding: 10px 12px;
+        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      }
+
+      .chrome__brand {
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .chrome__brand img {
+        height: 30px;
+      }
+
+      .chrome__text {
+        min-width: 0;
+      }
+
+      .chrome__title {
+        font-size: 12px;
+        letter-spacing: 0.06em;
+        line-height: 1.25;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .chrome__sub {
+        font-size: 9px;
+        letter-spacing: 0.08em;
+      }
+
+      .pill-counter {
+        padding: 8px 12px;
+        font-size: 11px;
+        touch-action: manipulation;
+      }
+
+      .slide-stage {
+        flex: 1 1 0;
+        min-height: 0;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        padding: 4px 0;
+      }
+
+      .slide-frame {
+        flex: 1 1 0;
+        min-height: 0;
+        width: 100%;
+        max-width: 100%;
+        aspect-ratio: unset;
+        max-height: none;
+        border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      }
+
+      .sheet__main {
+        padding: 12px max(12px, env(safe-area-inset-right, 0px)) 10px max(12px, env(safe-area-inset-left, 0px));
+      }
+
+      .foot {
+        padding: 10px max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px));
+        flex-wrap: wrap;
+        row-gap: 6px;
+      }
+
+      .cover {
+        padding:
+          max(16px, env(safe-area-inset-top, 0px))
+          max(16px, env(safe-area-inset-right, 0px))
+          max(16px, env(safe-area-inset-bottom, 0px))
+          max(16px, env(safe-area-inset-left, 0px));
+      }
+
+      .cover__title {
+        font-size: clamp(22px, 9vw, 36px);
+      }
+
+      .cover__sub {
+        font-size: clamp(12px, 3.5vw, 15px);
+      }
+
+      .cover__logo {
+        height: clamp(40px, 12vw, 64px);
+      }
+
+      .btn-row {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .deck-hint .deck-nav-btn,
+      .deck-hint .deck-nav-btn--text {
+        touch-action: manipulation;
+        min-height: 44px;
+        min-width: 44px;
+        padding: 8px 14px;
+      }
+
+      .infographic-timeline__nodes {
+        grid-template-columns: 1fr;
+      }
+
+      .search-broader__scroll {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .search-broader table {
+        min-width: 28rem;
       }
     }
 
