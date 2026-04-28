@@ -36,6 +36,16 @@ const galleryImages = [
   },
 ];
 
+const HOMEPAGE_NAV: [string, string][] = [
+  ["Home", "/#top"],
+  ["About", "/#about"],
+  ["Who we are", "/#who"],
+  ["Study abroad", "/#international"],
+  ["Study in India", "/#domestic"],
+  ["Services", "/#services"],
+  ["Contact", "/#contact"],
+];
+
 export function MerrakiiLanding() {
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +72,7 @@ export function MerrakiiLanding() {
   }, []);
 
   return (
-    <div ref={rootRef} className="mk-home min-h-screen bg-[#fff] text-[#1c1410]">
+    <div ref={rootRef} className="mk-home min-h-screen max-w-full min-w-0 overflow-x-hidden bg-[#fff] text-[#1c1410]">
       <a
         href="#mk-main"
         className="mk-home-skip focus:outline-none fixed left-4 top-4 z-[100] -translate-y-24 rounded-md bg-[#b01f24] px-4 py-2 text-sm font-semibold text-white opacity-0 transition focus:translate-y-0 focus:opacity-100"
@@ -70,47 +80,60 @@ export function MerrakiiLanding() {
         Skip to content
       </a>
 
-      <header className="mk-home-header sticky top-0 z-50 w-full border-b border-black/10 bg-white/95 backdrop-blur-md">
-        <div className="flex w-full items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-10 xl:px-14">
-          <Link href="/" className="group flex items-center gap-2 no-underline">
+      <header className="mk-home-header sticky top-0 z-50 w-full max-w-full border-b border-black/10 bg-white/95 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-full min-w-0 items-center justify-between gap-2 px-3 py-3 sm:gap-3 sm:px-5 lg:px-8 xl:px-12 2xl:px-14">
+          <Link href="/" className="group flex min-w-0 shrink items-center gap-2 no-underline">
             <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#b01f24] to-[#8b181c] text-sm font-bold text-white shadow-md transition group-hover:brightness-105"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#b01f24] to-[#8b181c] text-sm font-bold text-white shadow-md transition group-hover:brightness-105 sm:h-10 sm:w-10"
               aria-hidden
             >
               M
             </span>
-            <span className="mk-home-serif text-lg font-semibold tracking-tight text-[#1c1410] group-hover:text-[#b01f24]">
+            <span className="mk-home-serif truncate text-base font-semibold tracking-tight text-[#1c1410] group-hover:text-[#b01f24] sm:text-lg">
               Merrakii
             </span>
           </Link>
           <nav
-            className="mk-home-nav flex max-w-[min(100%,42rem)] flex-1 flex-wrap items-center justify-center gap-x-1 gap-y-1 sm:gap-x-2 md:max-w-none md:justify-end"
+            className="mk-home-nav mx-auto hidden min-w-0 max-w-[min(100%,48rem)] flex-1 flex-wrap items-center justify-center gap-x-0 gap-y-1 lg:flex xl:max-w-none xl:justify-end xl:gap-x-0.5"
             aria-label="Primary"
           >
-            {[
-              ["Home", "/#top"],
-              ["About", "/#about"],
-              ["Who we are", "/#who"],
-              ["Study abroad", "/#international"],
-              ["Study in India", "/#domestic"],
-              ["Services", "/#services"],
-              ["Contact", "/#contact"],
-            ].map(([label, href]) => (
+            {HOMEPAGE_NAV.map(([label, href]) => (
               <a
                 key={String(label)}
                 href={href}
-                className="rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider text-[#44403c] no-underline transition hover:bg-[#f7f4ed] hover:text-[#b01f24]"
+                className="rounded-md px-1.5 py-2 text-[10px] font-semibold uppercase tracking-wide text-[#44403c] no-underline transition hover:bg-[#f7f4ed] hover:text-[#b01f24] xl:px-2.5 xl:text-xs xl:tracking-wider"
               >
                 {label}
               </a>
             ))}
           </nav>
-          <Link
-            href="/india#login"
-            className="mk-home-btn-primary shrink-0 rounded-md px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white no-underline shadow-sm"
-          >
-            Get started
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <Link
+              href="/india#login"
+              className="mk-home-btn-primary rounded-md px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-white no-underline shadow-sm sm:px-4 sm:py-2.5 sm:text-xs"
+            >
+              Get started
+            </Link>
+            <details className="mk-home-mobile-nav relative lg:hidden">
+              <summary className="cursor-pointer rounded-md border border-black/15 bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-[#44403c] shadow-sm">
+                Menu
+              </summary>
+              <nav
+                className="absolute right-0 z-[60] mt-2 w-[min(calc(100vw-1.5rem),16rem)] rounded-lg border border-black/10 bg-white py-2 shadow-xl"
+                aria-label="Primary mobile"
+              >
+                {HOMEPAGE_NAV.map(([label, href]) => (
+                  <a
+                    key={`m-${label}`}
+                    href={href}
+                    className="block px-4 py-2.5 text-sm font-medium text-[#44403c] no-underline hover:bg-[#f7f4ed] hover:text-[#b01f24]"
+                  >
+                    {label}
+                  </a>
+                ))}
+              </nav>
+            </details>
+          </div>
         </div>
       </header>
 
@@ -123,7 +146,7 @@ export function MerrakiiLanding() {
           <div className="grid w-full items-stretch gap-0 lg:grid-cols-2">
             <div className="mk-home-reveal flex flex-col justify-center px-4 py-12 sm:px-8 lg:px-12 xl:px-16 lg:py-16 xl:py-20">
               <div className="max-w-xl">
-                <h1 id="about" className="mk-home-serif text-4xl font-semibold leading-[1.15] text-[#1c1410] sm:text-5xl lg:text-[3.25rem]">
+                <h1 id="about" className="mk-home-serif text-[clamp(1.75rem,5vw+0.25rem,3.25rem)] font-semibold leading-[1.15] text-[#1c1410]">
                   About
                   <span className="mt-3 block h-1 w-16 rounded-full bg-[#e39632]" />
                 </h1>
@@ -174,8 +197,8 @@ export function MerrakiiLanding() {
                 <span className="mx-auto mt-3 block h-1 w-16 rounded-full bg-[#e39632]" />
               </h2>
             </div>
-            <div className="mx-auto mt-12 grid max-w-7xl gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:gap-14 xl:gap-20">
-              <div className="space-y-6">
+            <div className="mx-auto mt-12 grid max-w-7xl min-w-0 gap-10 overflow-x-hidden lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:gap-14 xl:gap-20">
+              <div className="min-w-0 space-y-6">
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg shadow-md bg-[#e7e5e4]">
                   {/* Native img: avoids next/image wrapper issues; URL verified HTTP 200 */}
                   <img
@@ -193,7 +216,7 @@ export function MerrakiiLanding() {
                   support so learners can aim higher and reach their goals with confidence.
                 </p>
               </div>
-              <div className="mk-home-reveal relative">
+              <div className="mk-home-reveal relative min-w-0 overflow-hidden">
                 <span className="mk-home-watermark pointer-events-none select-none" aria-hidden>
                   M
                 </span>
@@ -308,7 +331,7 @@ export function MerrakiiLanding() {
                 Milestones that mirror both our global programmes and your India study experience in this app.
               </p>
             </div>
-            <div className="mx-auto mt-12 grid max-w-6xl gap-8 md:grid-cols-4 md:gap-0">
+            <div className="mx-auto mt-12 grid max-w-6xl grid-cols-2 gap-6 sm:gap-8 lg:grid-cols-4 lg:gap-0">
               {[
                 { n: "10+", l: "Study regions & pathways" },
                 { n: "8", l: "Academic fields covered" },
@@ -317,7 +340,7 @@ export function MerrakiiLanding() {
               ].map((s, i) => (
                 <div
                   key={s.l}
-                  className={`mk-home-reveal px-2 text-center md:px-6 ${i > 0 ? "md:border-l md:border-black/10" : ""}`}
+                  className={`mk-home-reveal px-1 text-center sm:px-2 lg:px-6 ${i > 0 ? "lg:border-l lg:border-black/10" : ""}`}
                 >
                   <p className="mk-home-stat-num mk-home-serif text-4xl font-bold text-[#b01f24] sm:text-5xl">{s.n}</p>
                   <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-[#57534e] sm:text-sm">{s.l}</p>
@@ -328,7 +351,7 @@ export function MerrakiiLanding() {
         </section>
 
         <section id="success" className="relative w-full" aria-label="Celebrating student success">
-          <div className="relative aspect-[21/9] min-h-[200px] w-full sm:min-h-[280px] md:min-h-[340px]">
+          <div className="relative aspect-[4/3] min-h-[200px] w-full sm:aspect-[16/9] md:aspect-[21/9] md:min-h-[280px] lg:min-h-[340px]">
             <Image
               src="https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=2000&q=85"
               alt="Graduates celebrating success"

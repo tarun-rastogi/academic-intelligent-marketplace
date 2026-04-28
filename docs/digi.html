@@ -2249,6 +2249,88 @@
       padding: 4px 12px;
     }
 
+    @media (max-width: 1024px) {
+      .chrome {
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 12px 16px;
+      }
+
+      .chrome__brand {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .chrome__brand img {
+        height: 36px;
+      }
+
+      .chrome__title {
+        font-size: 15px;
+      }
+
+      .chrome__sub {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+      }
+
+      .deck-shell {
+        padding: 10px 12px 12px;
+        gap: 6px;
+      }
+
+      .pill-counter {
+        padding: 8px 14px;
+        font-size: 12px;
+      }
+    }
+
+    @media (max-height: 820px) {
+      .deck-shell {
+        padding: 8px 10px 10px;
+        gap: 5px;
+      }
+
+      .chrome {
+        padding: 10px 14px;
+      }
+
+      .chrome__brand img {
+        height: 34px;
+      }
+
+      .slide-stage {
+        padding: 6px 4px;
+      }
+
+      .deck-hint {
+        padding: 6px 4px;
+        font-size: 9px;
+      }
+
+      .deck-hint .deck-nav-btn {
+        padding: 3px 8px;
+        font-size: 11px;
+        margin: 2px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .chrome__actions {
+        width: 100%;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+      }
+
+      .deck-hint {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+      }
+    }
+
     /* Supported channels — omni-channel surfaces */
     .channel-grid {
       display: grid;
