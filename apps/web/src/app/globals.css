@@ -367,6 +367,18 @@ body {
   color: #f0d9a8;
 }
 
+@media (max-width: 639.98px) {
+  .dam-hero-band {
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-xl);
+  }
+
+  .dam-hero-band .dam-hero-title {
+    font-size: clamp(1.5rem, 6.5vw, 2.25rem);
+    word-break: break-word;
+  }
+}
+
 /* —— Search page: moving carousel (3×5 in slides) —— */
 @keyframes dam-search-filmstrip {
   0% {
@@ -471,20 +483,31 @@ body {
   animation: mk-home-stat-glow 5s ease-in-out infinite;
 }
 
-.mk-home-mobile-nav > summary {
-  list-style: none;
+.mk-home-mobile-nav {
+  -webkit-tap-highlight-color: transparent;
 }
 
-.mk-home-mobile-nav > summary::-webkit-details-marker {
-  display: none;
+/* Hard fallback: horizontal nav only at xl+; button hidden at xl+ */
+@media (max-width: 1279.98px) {
+  .mk-home-header .mk-home-nav {
+    display: none !important;
+  }
 }
 
-.shell-mobile-nav > summary {
-  list-style: none;
+@media (min-width: 1280px) {
+  .mk-home-header .mk-home-mobile-nav {
+    display: none !important;
+  }
 }
 
-.shell-mobile-nav > summary::-webkit-details-marker {
-  display: none;
+.shell-mobile-nav-btn {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 1024px) {
+  .dam-shell-mobile {
+    display: none !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

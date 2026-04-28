@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const destinations = [
   "Australia",
@@ -48,6 +48,25 @@ const HOMEPAGE_NAV: [string, string][] = [
 
 export function MerrakiiLanding() {
   const rootRef = useRef<HTMLDivElement>(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileNavOpen]);
+
+  useEffect(() => {
+    if (!mobileNavOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileNavOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileNavOpen]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -94,7 +113,7 @@ export function MerrakiiLanding() {
             </span>
           </Link>
           <nav
-            className="mk-home-nav mx-auto hidden min-w-0 max-w-[min(100%,48rem)] flex-1 flex-wrap items-center justify-center gap-x-0 gap-y-1 lg:flex xl:max-w-none xl:justify-end xl:gap-x-0.5"
+            className="mk-home-nav mx-auto hidden min-w-0 max-w-[min(100%,48rem)] flex-1 flex-wrap items-center justify-center gap-x-0 gap-y-1 xl:flex xl:max-w-none xl:justify-end xl:gap-x-0.5"
             aria-label="Primary"
           >
             {HOMEPAGE_NAV.map(([label, href]) => (
@@ -114,28 +133,60 @@ export function MerrakiiLanding() {
             >
               Get started
             </Link>
-            <details className="mk-home-mobile-nav relative lg:hidden">
-              <summary className="cursor-pointer rounded-md border border-black/15 bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-[#44403c] shadow-sm">
-                Menu
-              </summary>
-              <nav
-                className="absolute right-0 z-[60] mt-2 w-[min(calc(100vw-1.5rem),16rem)] rounded-lg border border-black/10 bg-white py-2 shadow-xl"
-                aria-label="Primary mobile"
-              >
-                {HOMEPAGE_NAV.map(([label, href]) => (
-                  <a
-                    key={`m-${label}`}
-                    href={href}
-                    className="block px-4 py-2.5 text-sm font-medium text-[#44403c] no-underline hover:bg-[#f7f4ed] hover:text-[#b01f24]"
-                  >
-                    {label}
-                  </a>
-                ))}
-              </nav>
-            </details>
+            <button
+              type="button"
+              className="mk-home-mobile-nav xl:hidden cursor-pointer rounded-md border border-black/15 bg-white px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-[#44403c] shadow-sm"
+              aria-expanded={mobileNavOpen}
+              aria-controls="mk-home-drawer"
+              onClick={() => setMobileNavOpen(true)}
+            >
+              Menu
+            </button>
           </div>
         </div>
       </header>
+
+      {mobileNavOpen ? (
+        <>
+          <button
+            type="button"
+            className="fixed inset-0 z-[70] bg-black/45 xl:hidden"
+            aria-label="Close menu"
+            onClick={() => setMobileNavOpen(false)}
+          />
+          <div
+            id="mk-home-drawer"
+            className="fixed inset-y-0 right-0 z-[80] flex w-[min(20rem,calc(100%-1rem))] max-w-[min(20rem,100%-1rem)] flex-col border-l border-black/10 bg-white pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)] shadow-2xl xl:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+          >
+            <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3">
+              <span className="mk-home-serif text-base font-semibold text-[#1c1410]">Navigate</span>
+              <button
+                type="button"
+                className="rounded-md p-2 text-sm font-medium text-[#57534e] hover:bg-[#f7f4ed]"
+                onClick={() => setMobileNavOpen(false)}
+                aria-label="Close menu"
+              >
+                Close
+              </button>
+            </div>
+            <nav className="flex flex-1 flex-col overflow-y-auto overscroll-contain p-2" aria-label="Primary mobile">
+              {HOMEPAGE_NAV.map(([label, href]) => (
+                <a
+                  key={`m-${label}`}
+                  href={href}
+                  className="rounded-md px-4 py-3 text-base font-medium text-[#44403c] no-underline hover:bg-[#f7f4ed] hover:text-[#b01f24]"
+                  onClick={() => setMobileNavOpen(false)}
+                >
+                  {label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </>
+      ) : null}
 
       <main id="mk-main">
         <section

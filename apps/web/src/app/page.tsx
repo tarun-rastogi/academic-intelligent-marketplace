@@ -15,7 +15,9 @@ export const metadata = {
 
 export default function HomePage() {
   return (
-    <div className={`${playfair.variable} min-h-screen font-sans antialiased`}>
+    <div
+      className={`${playfair.variable} min-h-screen w-full max-w-[100%] overflow-x-clip font-sans antialiased`}
+    >
       <MerrakiiLanding />
     </div>
   );
