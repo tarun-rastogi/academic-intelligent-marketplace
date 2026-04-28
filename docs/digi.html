@@ -2211,6 +2211,44 @@
       font-family: var(--font-body);
     }
 
+    .deck-hint .deck-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2rem;
+      padding: 4px 10px;
+      margin: 0 3px;
+      box-sizing: border-box;
+      font: inherit;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      cursor: pointer;
+      vertical-align: middle;
+      transition:
+        background 0.15s ease,
+        border-color 0.15s ease;
+    }
+
+    .deck-hint .deck-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.35);
+    }
+
+    .deck-hint .deck-nav-btn:focus-visible {
+      outline: 2px solid var(--mk-gold-bright);
+      outline-offset: 2px;
+    }
+
+    .deck-hint .deck-nav-btn--text {
+      min-width: auto;
+      padding: 4px 12px;
+    }
+
     /* Supported channels — omni-channel surfaces */
     .channel-grid {
       display: grid;
@@ -5372,7 +5410,19 @@
       </div>
     </div>
 
-    <p class="deck-hint">Navigate · <kbd>←</kbd> <kbd>→</kbd> · Home · End</p>
+    <p class="deck-hint">
+      Navigate ·
+      <button type="button" class="deck-nav-btn" id="deckNavPrev" aria-label="Previous slide">←</button>
+      <button type="button" class="deck-nav-btn" id="deckNavNext" aria-label="Next slide">→</button>
+      ·
+      <button type="button" class="deck-nav-btn deck-nav-btn--text" id="deckNavFirst" aria-label="First slide">
+        Home
+      </button>
+      ·
+      <button type="button" class="deck-nav-btn deck-nav-btn--text" id="deckNavLast" aria-label="Last slide">
+        End
+      </button>
+    </p>
   </div>
 
   <div
@@ -5699,6 +5749,7 @@
       const slides = Array.from(document.querySelectorAll(".slide"));
       const total = slides.length;
       const counterEl = document.getElementById("slideCounter");
+      const frameEl = document.getElementById("frame");
 
       let current = 0;
 
@@ -5718,6 +5769,20 @@
       function prev() {
         if (current > 0) showSlide(current - 1);
         else showSlide(total - 1);
+      }
+
+      function modalBlocksDeckNav() {
+        var m = document.getElementById("wpModal");
+        return m && !m.hidden;
+      }
+
+      function deckNavTargetBlocksNav(el) {
+        if (!el) return true;
+        if (el.nodeType === 3 && el.parentElement) el = el.parentElement;
+        if (!el || !el.closest) return true;
+        return !!el.closest(
+          "button, a, input, textarea, select, label, [data-wp-open], [data-wp-close], .exec-tile, #execCaptureForm, #execCapturePanel, .sheet--exec-inputs",
+        );
       }
 
       document.addEventListener("keydown", function (e) {
@@ -5744,6 +5809,39 @@
         if (document.activeElement && typeof document.activeElement.blur === "function") {
           document.activeElement.blur();
         }
+      });
+
+      if (frameEl) {
+        frameEl.addEventListener(
+          "click",
+          function (e) {
+            if (modalBlocksDeckNav()) return;
+            if (deckNavTargetBlocksNav(e.target)) return;
+            var r = frameEl.getBoundingClientRect();
+            var x = e.clientX - r.left;
+            if (x < r.width / 2) prev();
+            else next();
+          },
+          false,
+        );
+      }
+
+      function bindNavBtn(id, fn) {
+        var b = document.getElementById(id);
+        if (b)
+          b.addEventListener("click", function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fn();
+          });
+      }
+      bindNavBtn("deckNavPrev", prev);
+      bindNavBtn("deckNavNext", next);
+      bindNavBtn("deckNavFirst", function () {
+        showSlide(0);
+      });
+      bindNavBtn("deckNavLast", function () {
+        showSlide(total - 1);
       });
 
       showSlide(0);

@@ -53,7 +53,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
               Account
             </Link>
             <Link
-              href="/#login"
+              href="/india#login"
               className="ml-1 rounded-lg bg-gradient-to-r from-[#b01f24] to-[#8b1a2a] px-3 py-2 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
             >
               Sign in

@@ -397,3 +397,85 @@ body {
 .dam-search-slide {
   flex-shrink: 0;
 }
+
+/* —— Merrakii marketing homepage (full width, burgundy/gold/cream — no blue) —— */
+@keyframes mk-home-stat-glow {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.88;
+  }
+}
+
+.mk-home-serif {
+  font-family: var(--font-mk-serif), "Palatino Linotype", Palatino, Georgia, ui-serif, serif;
+}
+
+.mk-home-section--muted {
+  background: #f5f5f4;
+}
+
+.mk-home-btn-primary {
+  background: linear-gradient(135deg, #b01f24 0%, #8b181c 100%);
+  box-shadow: 0 4px 14px rgba(176, 31, 36, 0.28);
+}
+
+.mk-home-btn-outline {
+  border-color: #b01f24;
+}
+
+.mk-home-watermark {
+  position: absolute;
+  right: -2%;
+  top: 50%;
+  z-index: 0;
+  transform: translateY(-50%);
+  font-size: clamp(10rem, 28vw, 18rem);
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(176, 31, 36, 0.04);
+  font-family: var(--font-mk-serif), Georgia, serif;
+}
+
+.mk-home-carousel {
+  scroll-snap-type: x mandatory;
+}
+
+.mk-home-carousel > div {
+  scroll-snap-align: start;
+}
+
+.mk-home-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.65s ease,
+    transform 0.65s ease;
+}
+
+.mk-home-reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mk-home-stat-num {
+  animation: mk-home-stat-glow 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-home-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .mk-home-stat-num {
+    animation: none;
+  }
+
+  .mk-home-carousel > div img {
+    transition: none !important;
+  }
+}
