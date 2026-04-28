@@ -388,8 +388,12 @@
       max-height: 100dvh;
       display: flex;
       flex-direction: column;
-      padding: 12px 16px 16px;
-      gap: 8px;
+      padding:
+        max(0px, env(safe-area-inset-top, 0px))
+        max(0px, env(safe-area-inset-right, 0px))
+        max(0px, env(safe-area-inset-bottom, 0px))
+        max(0px, env(safe-area-inset-left, 0px));
+      gap: 0;
       outline: none;
       position: relative;
       z-index: 1;
@@ -402,55 +406,14 @@
     .slide:focus, .slide:focus-visible { outline: none !important; }
     #deckShell *:focus, #deckShell *:focus-visible { outline: none !important; }
 
-    /* ——— App chrome ——— */
-    .chrome {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      position: relative;
-      z-index: 2;
-      padding: 14px 22px;
-      background: var(--mk-ink);
-      border-radius: var(--radius-md) var(--radius-md) 0 0;
-      border-bottom: 4px solid var(--mk-gold);
-      box-shadow: var(--shadow-float);
+    /* Slide counter overlay (top chrome removed — full-page deck) */
+    .deck-slide-counter {
+      position: absolute;
+      top: max(10px, env(safe-area-inset-top, 0px));
+      right: max(12px, env(safe-area-inset-right, 0px));
+      z-index: 50;
+      pointer-events: none;
     }
-
-    .chrome__brand { display: flex; align-items: center; gap: 16px; }
-    .chrome__brand img {
-      height: 42px;
-      width: auto;
-      max-width: none;
-      aspect-ratio: 1343 / 1193;
-      object-fit: contain;
-      object-position: left center;
-      flex-shrink: 0;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,.3));
-    }
-
-    .chrome__text { display: flex; flex-direction: column; gap: 2px; }
-    .chrome__title {
-      font-family: var(--font-display);
-      font-size: 17px;
-      font-weight: 600;
-      color: #fff;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-    .chrome__sub {
-      font-size: 11px;
-      font-weight: 500;
-      color: rgba(255,255,255,.55);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-    }
-    .chrome__sub em {
-      font-style: normal;
-      color: var(--mk-gold-bright);
-    }
-
-    .chrome__actions { display: flex; align-items: center; gap: 10px; }
 
     /* Slide counter = pill button style (template-like) */
     .pill-counter {
@@ -622,27 +585,29 @@
 
     /* ——— Stage & frame ——— */
     .slide-stage {
-      flex: 1;
+      flex: 1 1 0;
       min-height: 0;
+      position: relative;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 4px;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      padding: 0;
     }
 
     .slide-frame {
+      flex: 1 1 0;
       width: 100%;
-      max-width: 1220px;
-      /* Cap height inside flex stage (min-height:auto would overflow chrome/footer). */
+      max-width: none;
       min-width: 0;
       min-height: 0;
-      max-height: 100%;
-      aspect-ratio: 16 / 9;
+      max-height: none;
+      aspect-ratio: unset;
       position: relative;
       overflow: hidden;
       background: var(--mk-paper);
-      border-radius: 0 0 var(--radius-md) var(--radius-md);
-      box-shadow: var(--shadow-float);
+      border-radius: 0;
+      box-shadow: none;
     }
 
     .slides { position: absolute; inset: 0; }
@@ -2257,35 +2222,6 @@
     }
 
     @media (max-width: 1024px) {
-      .chrome {
-        flex-wrap: wrap;
-        gap: 8px;
-        padding: 12px 16px;
-      }
-
-      .chrome__brand {
-        flex: 1 1 auto;
-        min-width: 0;
-      }
-
-      .chrome__brand img {
-        height: 36px;
-      }
-
-      .chrome__title {
-        font-size: 15px;
-      }
-
-      .chrome__sub {
-        font-size: 10px;
-        letter-spacing: 0.1em;
-      }
-
-      .deck-shell {
-        padding: 10px 12px 12px;
-        gap: 6px;
-      }
-
       .pill-counter {
         padding: 8px 14px;
         font-size: 12px;
@@ -2293,23 +2229,6 @@
     }
 
     @media (max-height: 820px) {
-      .deck-shell {
-        padding: 8px 10px 10px;
-        gap: 5px;
-      }
-
-      .chrome {
-        padding: 10px 14px;
-      }
-
-      .chrome__brand img {
-        height: 34px;
-      }
-
-      .slide-stage {
-        padding: 6px 4px;
-      }
-
       .deck-hint {
         padding: 6px 4px;
         font-size: 9px;
@@ -2323,12 +2242,6 @@
     }
 
     @media (max-width: 640px) {
-      .chrome__actions {
-        width: 100%;
-        justify-content: flex-end;
-        flex-wrap: wrap;
-      }
-
       .deck-hint {
         display: flex;
         flex-wrap: wrap;
@@ -2340,48 +2253,6 @@
 
     /* Phones & narrow portrait: fill vertical space (16×9 frame is unreadably short below ~768px) */
     @media (max-width: 767.98px) {
-      .deck-shell {
-        padding:
-          max(6px, env(safe-area-inset-top, 0px))
-          max(6px, env(safe-area-inset-right, 0px))
-          max(6px, env(safe-area-inset-bottom, 0px))
-          max(6px, env(safe-area-inset-left, 0px));
-        gap: 4px;
-      }
-
-      .chrome {
-        padding: 10px 12px;
-        border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-      }
-
-      .chrome__brand {
-        gap: 10px;
-        min-width: 0;
-      }
-
-      .chrome__brand img {
-        height: 30px;
-      }
-
-      .chrome__text {
-        min-width: 0;
-      }
-
-      .chrome__title {
-        font-size: 12px;
-        letter-spacing: 0.06em;
-        line-height: 1.25;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .chrome__sub {
-        font-size: 9px;
-        letter-spacing: 0.08em;
-      }
-
       .pill-counter {
         padding: 8px 12px;
         font-size: 11px;
@@ -2394,7 +2265,7 @@
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
-        padding: 4px 0;
+        padding: 0;
       }
 
       .slide-frame {
@@ -2404,7 +2275,7 @@
         max-width: 100%;
         aspect-ratio: unset;
         max-height: none;
-        border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+        border-radius: 0;
       }
 
       .sheet__main {
@@ -4723,20 +4594,8 @@
 </head>
 <body>
   <div class="deck-shell" id="deckShell">
-    <header class="chrome">
-      <div class="chrome__brand">
-        <img src="images/merrakii-logo.png" alt="Merrakii" width="1343" height="1193" />
-        <div class="chrome__text">
-          <span class="chrome__title">Digital Academic Portal</span>
-          <span class="chrome__sub">Munjal Universal Consultancy · <em>merrakii.co.in</em></span>
-        </div>
-      </div>
-      <div class="chrome__actions">
-        <span class="pill-counter" id="slideCounter">01 / 14</span>
-      </div>
-    </header>
-
     <div class="slide-stage" role="group" aria-label="Slides">
+      <span class="pill-counter deck-slide-counter" id="slideCounter" aria-live="polite">01 / 14</span>
       <div class="slide-frame" id="frame">
         <div class="slides" id="slides">
           <!-- 1 Cover: full-bleed hero image + overlay (PDF-style title slide) -->
